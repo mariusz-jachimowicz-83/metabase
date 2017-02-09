@@ -12,6 +12,7 @@ import ModalWithTrigger from "metabase/components/ModalWithTrigger.jsx";
 import NightModeIcon from "metabase/components/icons/NightModeIcon.jsx";
 import Tooltip from "metabase/components/Tooltip.jsx";
 import DashboardShareWidget from "../containers/DashboardShareWidget";
+import DashboardEmbedWidget from "../containers/DashboardEmbedWidget";
 
 import ParametersPopover from "./parameters/ParametersPopover.jsx";
 import Popover from "metabase/components/Popover.jsx";
@@ -231,6 +232,14 @@ export default class DashboardHeader extends Component {
         if (!isFullscreen && isPublicLinksEnabled && (isAdmin || dashboard.public_uuid)) {
             buttons.push(
                 <DashboardShareWidget dashboard={dashboard} isAdmin={isAdmin} />
+            )
+        }
+
+        // FIXME:
+        const isEmbeddingEnabled = isPublicLinksEnabled;
+        if (!isFullscreen && (isPublicLinksEnabled || isEmbeddingEnabled) && isAdmin) {
+            buttons.push(
+                <DashboardEmbedWidget dashboard={dashboard} />
             )
         }
 

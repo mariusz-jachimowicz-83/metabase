@@ -56,27 +56,29 @@ export default class EmbedFrame extends Component<*, Props, *> {
                 [`Theme--${theme}`]: !!theme
             })}>
                 <div className="flex flex-column flex-full scroll-y relative">
-                    <div className="flex align-center px1 pt1 pb0 sm-px2 sm-pt2 sm-pb0 lg-px3 lg-pt3 lg-pb1 bg-white">
-                        { name && (
-                            <div className="h4 text-bold sm-h3 md-h2 text-dark">{name}</div>
-                        )}
-                        { parameters && parameters.length > 0 ?
-                            <div className="flex ml-auto">
-                                <Parameters
-                                    parameters={parameters.map(p => ({ ...p, value: parameterValues && parameterValues[p.id] }))}
-                                    query={location.query}
-                                    setParameterValue={setParameterValue}
-                                    isQB
-                                />
-                            </div>
-                        : null }
-                    </div>
+                    { name && parameters && parameters.length > 0 ?
+                        <div className="flex align-center px1 pt1 pb0 sm-px2 sm-pt2 sm-pb0 lg-px3 lg-pt3 lg-pb1 bg-white">
+                            { name && (
+                                <div className="h4 text-bold sm-h3 md-h2 text-dark">{name}</div>
+                            )}
+                            { parameters && parameters.length > 0 ?
+                                <div className="flex ml-auto">
+                                    <Parameters
+                                        parameters={parameters.map(p => ({ ...p, value: parameterValues && parameterValues[p.id] }))}
+                                        query={location.query}
+                                        setParameterValue={setParameterValue}
+                                        isQB
+                                    />
+                                </div>
+                            : null }
+                        </div>
+                    : null }
                     <div className="flex flex-column relative full flex-full px1">
                         {children}
                     </div>
                 </div>
                 { footer &&
-                    <div className="p1 md-p2 lg-p3 bg-white border-top flex-no-shrink flex align-center">
+                    <div className="EmbedFrame-footer p1 md-p2 lg-p3 border-top flex-no-shrink flex align-center">
                         <LogoBadge logoClassName="sm-show" />
                         {actionButtons &&
                             <div className="flex-align-right text-grey-3">{actionButtons}</div>

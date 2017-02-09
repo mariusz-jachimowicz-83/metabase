@@ -1,4 +1,6 @@
 
+import { optionsToHashParams } from "./embed";
+
 export const getPublicEmbedOptions = ({ iframeUrl }) => [
     { name: "HTML",    source: () => html({ iframeUrl: `"${iframeUrl}"` }), mode: "ace/mode/html" },
     { name: "JSX",     source: () =>  jsx({ iframeUrl: `"${iframeUrl}"` }), mode: "ace/mode/jsx" },
@@ -28,7 +30,7 @@ const jsx = ({ iframeUrl }) =>
     allowTransparency
 />`
 
-const node = ({ siteUrl, secretKey, resourceType, resourceId, params }) =>
+const node = ({ siteUrl, secretKey, resourceType, resourceId, params, displayOptions }) =>
 `var jwt = require("jsonwebtoken");
 
 var METABASE_SITE_URL = ${JSON.stringify(siteUrl)};
@@ -40,9 +42,9 @@ var payload = {
 };
 var token = jwt.sign(payload, METABASE_SECRET_KEY);
 
-var iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token;`;
+var iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token${optionsToHashParams(displayOptions) ? " + " + JSON.stringify(optionsToHashParams(displayOptions)) : "" };`;
 
-const ruby = ({ siteUrl, secretKey, resourceType, resourceId, params }) =>
+const ruby = ({ siteUrl, secretKey, resourceType, resourceId, params, displayOptions }) =>
 `require 'jwt'
 
 METABASE_SITE_URL = ${JSON.stringify(siteUrl)}
@@ -56,5 +58,5 @@ payload = {
 }
 token = JWT.encode payload, METABASE_SECRET_KEY
 
-iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token
+iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token${optionsToHashParams(displayOptions) ? " + " + JSON.stringify(optionsToHashParams(displayOptions)) : "" }
 `;

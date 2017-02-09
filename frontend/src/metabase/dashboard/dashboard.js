@@ -315,6 +315,16 @@ export const fetchDashboard = createThunkAction(FETCH_DASHBOARD, function(dashId
     };
 });
 
+const UPDATE_ENABLE_EMBEDDING = "metabase/dashboard/UPDATE_ENABLE_EMBEDDING";
+export const updateEnableEmbedding = createAction(UPDATE_ENABLE_EMBEDDING, ({ id }, enable_embedding) =>
+    DashboardApi.update({ id, enable_embedding })
+);
+
+const UPDATE_EMBEDDING_PARAMS = "metabase/dashboard/UPDATE_EMBEDDING_PARAMS";
+export const updateEmbeddingParams = createAction(UPDATE_EMBEDDING_PARAMS, ({ id }, embedding_params) =>
+    DashboardApi.update({ id, embedding_params })
+);
+
 export const saveDashboard = createThunkAction(SAVE_DASHBOARD, function(dashId) {
     return async function(dispatch, getState) {
         let { dashboards, dashcards, dashboardId } = getState().dashboard;
@@ -573,6 +583,12 @@ const dashboards = handleActions({
     },
     [DELETE_PUBLIC_LINK]: { next: (state, { payload }) =>
         assocIn(state, [payload.id, "public_uuid"], null)
+    },
+    [UPDATE_ENABLE_EMBEDDING]: { next: (state, { payload }) =>
+        assocIn(state, [payload.id, "embedding_params"], payload.uuid)
+    },
+    [UPDATE_EMBEDDING_PARAMS]: { next: (state, { payload }) =>
+        assocIn(state, [payload.id, "enable_embedding"], null)
     },
 }, {});
 

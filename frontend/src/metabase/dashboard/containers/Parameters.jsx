@@ -5,8 +5,13 @@ import React, { Component, PropTypes } from "react";
 import ParameterWidget from "./ParameterWidget.jsx";
 
 import querystring from "querystring";
+import cx from "classnames";
 
 export default class Parameters extends Component {
+    defaultProps = {
+        noSyncQueryString: false
+    }
+
     componentWillMount() {
         // sync parameters from URL query string
         const { parameters, setParameterValue, query } = this.props;
@@ -20,10 +25,13 @@ export default class Parameters extends Component {
     }
 
     componentDidUpdate() {
+        if (!this.props.noSyncQueryString) {
+            return;
+        }
+
         // sync parameters to URL query string
-        const { parameters } = this.props;
         const queryParams = {};
-        for (const parameter of parameters) {
+        for (const parameter of this._parametersWithValues()) {
             if (parameter.value) {
                 queryParams[parameter.slug] = parameter.value;
             }
@@ -37,15 +45,30 @@ export default class Parameters extends Component {
         }
     }
 
+    _parametersWithValues() {
+        const { parameters, parameterValues } = this.props;
+        if (parameterValues) {
+            return parameters.map(p => ({
+                ...p,
+                value: parameterValues[p.id]
+            }));
+        } else {
+            return parameters;
+        }
+    }
+
     render() {
         const {
-            parameters,
+            className,
             editingParameter, setEditingParameter,
             isEditing, isFullscreen, isNightMode, isQB,
             setParameterName, setParameterValue, setParameterDefaultValue, removeParameter
         } = this.props;
+
+        const parameters = this._parametersWithValues();
+
         return (
-            <div className="flex flex-row align-end">
+            <div className={cx(className, "flex flex-row align-end")}>
                 { parameters.map(parameter =>
                     <ParameterWidget
                         key={parameter.id}

@@ -14,7 +14,7 @@ import "ace/mode-ruby";
 import "ace/mode-html";
 import "ace/mode-jsx";
 
-const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey, resourceType, resourceId, params }) =>
+const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey, resource, resourceType, params, displayOptions }) =>
     <div className={className}>
         { secure ?
             <div key="secure">
@@ -24,11 +24,8 @@ const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey
                 />
                 <CodeSample
                     title="Server-side Token Signing"
-                    options={getSignTokenOptions({ siteUrl, secretKey, resourceType, resourceId, params })}
+                    options={getSignTokenOptions({ siteUrl, secretKey, resourceType, resourceId: resource.id, params, displayOptions })}
                 />
-                {/* <div className="mt1 flex align-center">
-                    <ViewOnJWTIO className="ml-auto" token={token} />
-                </div> */}
             </div>
         :
             <div key="public">
