@@ -7,7 +7,11 @@ import { CLOSE_QB_NEWB_MODAL } from "metabase/query_builder/actions";
 import { UserApi } from "metabase/services";
 
 export const refreshCurrentUser = createAction("REFRESH_CURRENT_USER", () => {
-    return UserApi.current();
+    try {
+        return UserApi.current();
+    } catch (e) {
+        return null;
+    }
 });
 
 export const loadCurrentUser = createThunkAction("LOAD_CURRENT_USER", () =>
