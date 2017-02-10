@@ -11,10 +11,14 @@ import EmbedModalContent from "./EmbedModalContent";
 import cx from "classnames";
 
 type Props = {
+    className?: string,
+    resourceType: string
 };
 
-export default class EmbedWidget extends Component<*, Props> {
+export default class EmbedWidget extends Component<*, Props, *> {
     props: Props;
+
+    _modal: ?ModalWithTrigger
 
     render() {
         const { className, resourceType } = this.props;
@@ -32,7 +36,7 @@ export default class EmbedWidget extends Component<*, Props> {
             >
                 <EmbedModalContent
                     {...this.props}
-                    onClose={() => this._modal.close()}
+                    onClose={() => this._modal && this._modal.close()}
                     className="full-height"
                 />
             </ModalWithTrigger>

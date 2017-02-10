@@ -9,7 +9,7 @@ import cx from "classnames";
 
 export default class Parameters extends Component {
     defaultProps = {
-        noSyncQueryString: false
+        syncQueryString: false
     }
 
     componentWillMount() {
@@ -25,23 +25,21 @@ export default class Parameters extends Component {
     }
 
     componentDidUpdate() {
-        if (!this.props.noSyncQueryString) {
-            return;
-        }
-
-        // sync parameters to URL query string
-        const queryParams = {};
-        for (const parameter of this._parametersWithValues()) {
-            if (parameter.value) {
-                queryParams[parameter.slug] = parameter.value;
+        if (this.props.syncQueryString) {
+            // sync parameters to URL query string
+            const queryParams = {};
+            for (const parameter of this._parametersWithValues()) {
+                if (parameter.value) {
+                    queryParams[parameter.slug] = parameter.value;
+                }
             }
-        }
 
-        let search = querystring.stringify(queryParams);
-        search = (search ? "?" + search : "");
+            let search = querystring.stringify(queryParams);
+            search = (search ? "?" + search : "");
 
-        if (search !== window.location.search) {
-            history.replaceState(null, document.title, window.location.pathname + search + window.location.hash);
+            if (search !== window.location.search) {
+                history.replaceState(null, document.title, window.location.pathname + search + window.location.hash);
+            }
         }
     }
 

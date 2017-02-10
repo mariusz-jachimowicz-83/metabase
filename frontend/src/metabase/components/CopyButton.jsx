@@ -8,6 +8,7 @@ import Tooltip from "metabase/components/Tooltip";
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 type Props = {
+    className?: string,
     value: string
 };
 type State = {

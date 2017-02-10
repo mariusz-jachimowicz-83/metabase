@@ -4,7 +4,14 @@ import React, { Component, PropTypes } from "react";
 
 import cx from "classnames";
 
-const EmbedSelect = ({ className, value, onChange, options }) =>
+type Props = {
+    className?: string,
+    value: string,
+    onChange: (value: string) => void,
+    options: Array<{ name: string, value: string}>
+}
+
+const EmbedSelect = ({ className, value, onChange, options }: Props) =>
     <div className={cx(className, "flex")}>
         { options.map(option =>
             <div

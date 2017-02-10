@@ -14,7 +14,22 @@ import "ace/mode-ruby";
 import "ace/mode-html";
 import "ace/mode-jsx";
 
-const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey, resource, resourceType, params, displayOptions }) =>
+import type { EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
+
+type Props = {
+    className: string,
+    secure: bool,
+    iframeUrl: string,
+    token: string,
+    siteUrl: string,
+    secretKey: string,
+    resource: { id: string, public_uuid: string },
+    resourceType: string,
+    params: EmbeddingParams,
+    displayOptions: DisplayOptions
+}
+
+const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey, resource, resourceType, params, displayOptions }: Props) =>
     <div className={className}>
         { secure ?
             <div key="secure">

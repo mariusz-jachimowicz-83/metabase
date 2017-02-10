@@ -9,8 +9,19 @@ import AceEditor from "metabase/components/TextEditor";
 
 import _ from "underscore";
 
-export default class CodeSample extends Component {
-    constructor(props) {
+type Props = {
+    title: string,
+    options: Array<{ name: string, value: string, source: () => string, mode: string }>
+};
+
+type State = {
+    name: string,
+};
+
+export default class CodeSample extends Component<*, Props, State> {
+    state: State;
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             name: props.options[0].name

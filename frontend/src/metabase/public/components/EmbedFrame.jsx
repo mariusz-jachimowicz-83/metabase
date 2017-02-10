@@ -67,6 +67,7 @@ export default class EmbedFrame extends Component<*, Props, *> {
                                         parameters={parameters.map(p => ({ ...p, value: parameterValues && parameterValues[p.id] }))}
                                         query={location.query}
                                         setParameterValue={setParameterValue}
+                                        syncQueryString
                                         isQB
                                     />
                                 </div>

@@ -4,7 +4,11 @@ import React, { Component, PropTypes } from "react";
 
 import EmbedFrame from "./EmbedFrame";
 
-const PublicError = ({ message = "An error occurred" }) =>
+type Props = {
+    message?: string
+};
+
+const PublicError = ({ message = "An error occurred" }: Props) =>
     <EmbedFrame className="spread">
         <div className="flex layout-centered flex-full flex-column">
             <div className="QueryError-image QueryError-image--noRows"></div>

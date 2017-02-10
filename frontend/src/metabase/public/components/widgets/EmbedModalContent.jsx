@@ -17,10 +17,36 @@ import { getSignedPreviewUrl, getUnsignedPreviewUrl, getSignedToken } from "meta
 import { getSiteUrl, getEmbeddingSecretKey } from "metabase/selectors/settings";
 import cx from "classnames";
 
+import type { Parameter, ParameterId } from "metabase/meta/types/Dashboard";
+
+export type EmbeddingParams = {
+    [key: string]: string
+}
+
+export type DisplayOptions = {
+    theme: ?string,
+    bordered: boolean
+}
+
 type Props = {
+    className?: string,
+    siteUrl: string,
+    secretKey: string,
+    resource: { id: string, public_uuid: string, embedding_params: EmbeddingParams },
+    resourceType: string,
+    resourceParameters: Parameter[],
+    onUpdateEnableEmbedding: (enable_embedding: bool) => Promise<void>,
+    onUpdateEmbeddingParams: (embedding_params: EmbeddingParams) => Promise<void>,
+    onCreatePublicLink: () => Promise<void>,
+    onClose: () => void
 };
 
 type State = {
+    pane: "preview"|"code",
+    secure: bool,
+    embeddingParams: EmbeddingParams,
+    displayOptions: DisplayOptions,
+    parameterValues: { [id: ParameterId]: string }
 };
 
 
@@ -52,6 +78,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
     handleSave = async () => {
         try {
+            await require("metabase/lib/promise").delay(1000);
             const { resource } = this.props;
             const { secure, embeddingParams } = this.state;
             if (secure) {
@@ -66,6 +93,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
             }
         } catch (e) {
             console.error(e);
+            throw e;
         }
     }
 

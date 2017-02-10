@@ -9,6 +9,7 @@ export const getPublicEmbedOptions = ({ iframeUrl }) => [
 export const getSignedEmbedOptions = () => [
     { name: "HTML (Mustache)", source: () => html({ iframeUrl: `"{{iframeUrl}}"`, mode: "ace/mode/html" })},
     { name: "JSX",             source: () =>  jsx({ iframeUrl: `{iframeUrl}`,     mode: "ace/mode/jsx" })},
+    { name: "Pug/Jade",        source: () =>  pug({ iframeUrl: `iframeUrl` })},
 ];
 
 export const getSignTokenOptions = (params) => [
@@ -29,6 +30,13 @@ const jsx = ({ iframeUrl }) =>
     frameBorder={0}
     allowTransparency
 />`
+
+const pug = ({ iframeUrl }) =>
+`iframe(
+    src=${iframeUrl}
+    frameborder="0"
+    allowtransparency
+)`
 
 const node = ({ siteUrl, secretKey, resourceType, resourceId, params, displayOptions }) =>
 `var jwt = require("jsonwebtoken");

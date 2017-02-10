@@ -2,7 +2,7 @@ import React from "react";
 
 import Toggle from "metabase/components/Toggle";
 import Icon from "metabase/components/Icon";
-import Button from "metabase/components/Button";
+import ActionButton from "metabase/components/ActionButton";
 import Select, { Option } from "metabase/components/Select";
 
 import EmbedSelect from "./EmbedSelect";
@@ -74,7 +74,7 @@ const EmbedSettingsPane = ({
             </Section>
         }
         <div className="ml-auto">
-            <Button primary onClick={onSave}>Update Settings</Button>
+            <ActionButton primary actionFn={onSave} activeText="Updating..." successText="Updated" failedText="Failed!">Update Settings</ActionButton>
         </div>
     </div>
 
