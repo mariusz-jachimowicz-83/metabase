@@ -13,9 +13,6 @@ import cx from "classnames";
 type Props = {
 };
 
-type State = {
-};
-
 export default class EmbedWidget extends Component<*, Props> {
     props: Props;
 

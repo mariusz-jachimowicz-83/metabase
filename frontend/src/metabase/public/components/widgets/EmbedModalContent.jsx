@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { Component, PropTypes } from "react";
+import { connect } from "react-redux";
 
 import EmbedSettingsPane from "./EmbedSettingsPane";
 import EmbedPreviewPane from "./EmbedPreviewPane";
@@ -11,7 +12,10 @@ import Icon from "metabase/components/Icon";
 
 import Parameters from "metabase/dashboard/containers/Parameters";
 
-import { getSignedPreviewUrl, getUnsignedPreviewUrl, getSignedToken } from "../../lib/embed";
+import { getSignedPreviewUrl, getUnsignedPreviewUrl, getSignedToken } from "metabase/public/lib/embed";
+
+import { getSiteUrl, getEmbeddingSecretKey } from "metabase/selectors/settings";
+import cx from "classnames";
 
 type Props = {
 };
@@ -19,12 +23,13 @@ type Props = {
 type State = {
 };
 
-// FIXME:
-const siteUrl = "http://localhost:3000";
-const secretKey = "da1be1ab5f380fc1c1a0300509185795add503ef05186d9364a38d5a8b03e36d"
 
-import cx from "classnames";
+const mapStateToProps = (state, props) => ({
+    siteUrl: getSiteUrl(state, props),
+    secretKey: getEmbeddingSecretKey(state, props),
+})
 
+@connect(mapStateToProps)
 export default class EmbedModalContent extends Component<*, Props, State> {
     state: State;
 
@@ -79,7 +84,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
     }
 
     render() {
-        const { className, resource, resourceType, resourceParameters, onClose } = this.props;
+        const { className, siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
         const { pane, secure, embeddingParams, parameterValues, displayOptions } = this.state;
 
         const params = this.getPreviewParams();
@@ -96,7 +101,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
         return (
             <div
-                className={cx(className, "flex-full flex flex-column p4", { "bg-brand": pane === "preview" })}
+                className={cx(className, "flex flex-column p4", { "bg-brand": pane === "preview" })}
                 style={{ transition: "background-color 300ms linear" }}
             >
                 { onClose &&
@@ -149,6 +154,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                     </div>
                     <div className="ml4">
                         <EmbedSettingsPane
+                            resourceType={resourceType}
                             resourceParameters={resourceParameters}
                             secure={secure}
                             onChangeSecure={(secure) => this.setState({ secure })}

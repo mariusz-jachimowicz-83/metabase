@@ -56,7 +56,7 @@ export default class EmbedFrame extends Component<*, Props, *> {
                 [`Theme--${theme}`]: !!theme
             })}>
                 <div className="flex flex-column flex-full scroll-y relative">
-                    { name && parameters && parameters.length > 0 ?
+                    { name || (parameters && parameters.length > 0) ?
                         <div className="flex align-center px1 pt1 pb0 sm-px2 sm-pt2 sm-pb0 lg-px3 lg-pt3 lg-pb1 bg-white">
                             { name && (
                                 <div className="h4 text-bold sm-h3 md-h2 text-dark">{name}</div>
