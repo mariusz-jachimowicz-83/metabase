@@ -1,52 +1,32 @@
 import React from "react";
 
-import Toggle from "metabase/components/Toggle";
 import Icon from "metabase/components/Icon";
 import ActionButton from "metabase/components/ActionButton";
 import Select, { Option } from "metabase/components/Select";
 
-import EmbedSelect from "./EmbedSelect";
+import DisplayOptionsPane from "./DisplayOptionsPane";
 
 import cx from "classnames";
-
-const THEME_OPTIONS = [
-    { name: "Light", value: null },
-    { name: "Dark", value: "night" }
-];
-
-const BORDER_OPTIONS = [
-    { name: "Bordered", value: true },
-    { name: "No border", value: false }
-];
 
 const getIconForParameter = (parameter) =>
     parameter.type === "category" ? "string" :
     parameter.type.indexOf("date/") === 0 ? "calendar" :
     "unknown";
 
-const EmbedSettingsPane = ({
+const AdvancedSettingsPane = ({
     className,
+    secure,
     resourceType, resourceParameters,
-    secure, onChangeSecure,
     embeddingParams, onChangeEmbeddingParameters,
     displayOptions, onChangeDisplayOptions,
     onSave,
 }) =>
     <div className={cx(className, "rounded bordered p2 flex flex-column bg-white")} style={{ width: 320 }}>
-        <Section title="Security">
-            <p>Require cryptographic signing for this embed</p>
-            <Toggle value={secure} onChange={onChangeSecure} />
-        </Section>
         <Section title="Style">
-            <EmbedSelect
-                value={displayOptions.theme}
-                options={THEME_OPTIONS}
-                onChange={(value) => onChangeDisplayOptions({ ...displayOptions, theme: value })}
-            />
-            <EmbedSelect
-                value={displayOptions.bordered}
-                options={BORDER_OPTIONS}
-                onChange={(value) => onChangeDisplayOptions({ ...displayOptions, bordered: value })}
+            <DisplayOptionsPane
+                className="pt1"
+                displayOptions={displayOptions}
+                onChangeDisplayOptions={onChangeDisplayOptions}
             />
         </Section>
         { secure &&
@@ -74,14 +54,14 @@ const EmbedSettingsPane = ({
             </Section>
         }
         <div className="ml-auto">
-            <ActionButton primary actionFn={onSave} activeText="Updating..." successText="Updated" failedText="Failed!">Update Settings</ActionButton>
+            <ActionButton primary actionFn={onSave} activeText="Updating..." successText="Updated" failedText="Failed!">Publish</ActionButton>
         </div>
     </div>
 
-const Section = ({ title, children }) =>
-    <div className="mb4">
+const Section = ({ className, title, children }) =>
+    <div className={cx(className, "mb4")}>
         <h3>{title}</h3>
         {children}
     </div>
 
-export default EmbedSettingsPane;
+export default AdvancedSettingsPane;

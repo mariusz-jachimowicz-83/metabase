@@ -34,12 +34,12 @@ const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey
         { secure ?
             <div key="secure">
                 <CodeSample
-                    title="Embed Code"
-                    options={getSignedEmbedOptions({ iframeUrl })}
-                />
-                <CodeSample
                     title="Server-side Token Signing"
                     options={getSignTokenOptions({ siteUrl, secretKey, resourceType, resourceId: resource.id, params, displayOptions })}
+                />
+                <CodeSample
+                    title="Embed Code"
+                    options={getSignedEmbedOptions({ iframeUrl })}
                 />
             </div>
         :

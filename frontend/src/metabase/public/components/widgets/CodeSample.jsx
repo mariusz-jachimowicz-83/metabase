@@ -10,8 +10,9 @@ import AceEditor from "metabase/components/TextEditor";
 import _ from "underscore";
 
 type Props = {
-    title: string,
-    options: Array<{ name: string, value: string, source: () => string, mode: string }>
+    className?: string,
+    title?: string,
+    options?: Array<{ name: string, value: string, source: () => string, mode: string }>
 };
 
 type State = {
@@ -21,6 +22,10 @@ type State = {
 export default class CodeSample extends Component<*, Props, State> {
     state: State;
 
+    static defaultProps = {
+        className: "bordered rounded relative"
+    }
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -28,27 +33,29 @@ export default class CodeSample extends Component<*, Props, State> {
         };
     }
     render() {
-        const { title, options } = this.props;
+        const { className, title, options } = this.props;
         const { name } = this.state;
         const selected = _.findWhere(options, { name });
         const source = selected && selected.source()
         return (
             <div>
-                <div className="mt2 flex align-center">
-                    <h4>{title}</h4>
-                    { options && options.length > 0 ?
-                        <Select
-                            className="AdminSelect--borderless ml-auto"
-                            value={name}
-                            onChange={(e) => this.setState({ name: e.target.value })}
-                        >
-                            { options.map(option =>
-                                <Option value={option.name}>{option.name}</Option>
-                            )}
-                        </Select>
-                    : null }
-                </div>
-                <div className="bordered rounded relative">
+                { (title || (options && options.length > 1)) &&
+                    <div className="mt2 flex align-center">
+                        <h4>{title}</h4>
+                        { options && options.length > 1 ?
+                            <Select
+                                className="AdminSelect--borderless ml-auto"
+                                value={name}
+                                onChange={(e) => this.setState({ name: e.target.value })}
+                            >
+                                { options.map(option =>
+                                    <Option value={option.name}>{option.name}</Option>
+                                )}
+                            </Select>
+                        : null }
+                    </div>
+                }
+                <div className={className}>
                     <AceEditor
                         className="z1"
                         value={source}

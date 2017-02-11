@@ -3,14 +3,13 @@
 import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
 
-import EmbedSettingsPane from "./EmbedSettingsPane";
-import EmbedPreviewPane from "./EmbedPreviewPane";
-import EmbedCodePane from "./EmbedCodePane";
+import SimpleEmbedPane from "./SimpleEmbedPane";
+import AdvancedEmbedPane from "./AdvancedEmbedPane";
 
-import ToggleLarge from "metabase/components/ToggleLarge";
 import Icon from "metabase/components/Icon";
 
-import Parameters from "metabase/dashboard/containers/Parameters";
+import EmbedTypePicker from "./EmbedTypePicker";
+
 
 import { getSignedPreviewUrl, getUnsignedPreviewUrl, getSignedToken } from "metabase/public/lib/embed";
 
@@ -43,7 +42,7 @@ type Props = {
 
 type State = {
     pane: "preview"|"code",
-    secure: bool,
+    embedType: null|"simple"|"secure",
     embeddingParams: EmbeddingParams,
     displayOptions: DisplayOptions,
     parameterValues: { [id: ParameterId]: string }
@@ -63,7 +62,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         super(props);
         this.state = {
             pane: "preview",
-            secure: false,
+            embedType: null,
             embeddingParams: props.resource.embedding_params || {},
             displayOptions: {
                 theme: null,
@@ -113,14 +112,14 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
     render() {
         const { className, siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
-        const { pane, secure, embeddingParams, parameterValues, displayOptions } = this.state;
+        const { pane, embedType, embeddingParams, parameterValues, displayOptions } = this.state;
 
         const params = this.getPreviewParams();
 
         let iframeUrl;
-        if (secure) {
+        if (embedType === "secure") {
             iframeUrl = getSignedPreviewUrl(siteUrl, resourceType, resource.id, params, displayOptions, secretKey);
-        } else {
+        } else if (embedType === "simple") {
             iframeUrl = getUnsignedPreviewUrl(siteUrl, resourceType, resource.public_uuid, displayOptions);
         }
         const token = getSignedToken(resourceType, resource.id, params, secretKey);
@@ -129,71 +128,60 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
         return (
             <div
-                className={cx(className, "flex flex-column p4", { "bg-brand": pane === "preview" })}
-                style={{ transition: "background-color 300ms linear" }}
+                className={cx(className, "flex flex-column p4")}
             >
-                { onClose &&
+                <div className="flex layout-centered relative">
+                    <h2>
+                        { embedType == null ?
+                            null
+                        : embedType === "simple" ?
+                            <a onClick={() => this.setState({ embedType: null })}>Embed -> Simple</a>
+                        : embedType === "secure" ?
+                            <a onClick={() => this.setState({ embedType: null })}>Embed -> Secure</a>
+                        : null}
+                    </h2>
                     <Icon
-                        className="text-grey-2 text-grey-4-hover cursor-pointer absolute m2 p2 top right"
+                        className="text-grey-2 text-grey-4-hover cursor-pointer m2 p2"
                         name="close"
                         size={24}
                         onClick={onClose}
                     />
-                }
-                <ToggleLarge
-                    className="mb2"
-                    style={{ width: 244, height: 34 }}
-                    value={pane === "preview"}
-                    textLeft="Preview"
-                    textRight="Code"
-                    onChange={(e) => this.setState({ pane: pane === "preview" ? "code" : "preview" })}
-                />
-                <div className={"flex-full flex"}>
-                    <div className="flex-full flex flex-column">
-                        { pane === "preview" ?
-                            <EmbedPreviewPane
-                                className="flex-full"
-                                previewUrl={iframeUrl}
-                            />
-                        : pane === "code" ?
-                            <EmbedCodePane
-                                className="flex-full"
-                                resource={resource}
-                                resourceType={resourceType}
-                                secure={secure}
-                                iframeUrl={iframeUrl}
-                                token={token}
-                                siteUrl={siteUrl}
-                                secretKey={secretKey}
-                                params={params}
-                                displayOptions={displayOptions}
-                            />
-                        : null }
-                        { secure && previewParameters.length > 0 &&
-                            <div className="mt4 bordered rounded bg-white p2">
-                                <h3 className="mb2">Preview Locked Parameters</h3>
-                                <Parameters
-                                    parameters={previewParameters}
-                                    parameterValues={parameterValues}
-                                    setParameterValue={(id, value) => this.setState({ parameterValues: { ...parameterValues, [id]: value }})}
-                                />
-                            </div>
-                        }
-                    </div>
-                    <div className="ml4">
-                        <EmbedSettingsPane
-                            resourceType={resourceType}
-                            resourceParameters={resourceParameters}
-                            secure={secure}
-                            onChangeSecure={(secure) => this.setState({ secure })}
-                            embeddingParams={embeddingParams}
-                            onChangeEmbeddingParameters={(embeddingParams) => this.setState({ embeddingParams })}
-                            displayOptions={displayOptions}
-                            onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
-                            onSave={this.handleSave}
-                        />
-                    </div>
                 </div>
+                { embedType == null ?
+                    <EmbedTypePicker
+                        className="flex-full"
+                        onChangeEmbedType={(embedType) => this.setState({ embedType })}
+                    />
+                : embedType === "simple" ?
+                    <SimpleEmbedPane
+                        className="flex-full"
+                        iframeUrl={iframeUrl}
+                        displayOptions={displayOptions}
+                        onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
+                    />
+                : embedType === "secure" ?
+                    <AdvancedEmbedPane
+                        pane={pane}
+                        resource={resource}
+                        resourceType={resourceType}
+                        embedType={embedType}
+                        token={token}
+                        iframeUrl={iframeUrl}
+                        siteUrl={siteUrl}
+                        secretKey={secretKey}
+                        params={params}
+                        displayOptions={displayOptions}
+                        previewParameters={previewParameters}
+                        parameterValues={parameterValues}
+                        resourceParameters={resourceParameters}
+                        embeddingParams={embeddingParams}
+                        onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
+                        onChangeEmbeddingParameters={(embeddingParams) => this.setState({ embeddingParams })}
+                        onChangeParameterValue={(id, value) => this.setState({ ...parameterValues, [id]: value })}
+                        onChangePane={(pane) => this.setState({ pane })}
+                        onSave={this.handleSave}
+                    />
+                : null }
             </div>
         );
     }

@@ -2,8 +2,7 @@
 import { optionsToHashParams } from "./embed";
 
 export const getPublicEmbedOptions = ({ iframeUrl }) => [
-    { name: "HTML",    source: () => html({ iframeUrl: `"${iframeUrl}"` }), mode: "ace/mode/html" },
-    { name: "JSX",     source: () =>  jsx({ iframeUrl: `"${iframeUrl}"` }), mode: "ace/mode/jsx" },
+    { name: "HTML",    source: () => html({ iframeUrl: `"${iframeUrl}"` }), mode: "ace/mode/html" }
 ];
 
 export const getSignedEmbedOptions = () => [
