@@ -133,7 +133,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                 <div className="flex layout-centered relative">
                     <h2>
                         { embedType == null ?
-                            null
+                            <a onClick={() => this.setState({ embedType: null })}>Embed</a>
                         : embedType === "simple" ?
                             <a onClick={() => this.setState({ embedType: null })}>Embed -> Simple</a>
                         : embedType === "secure" ?
@@ -141,7 +141,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                         : null}
                     </h2>
                     <Icon
-                        className="text-grey-2 text-grey-4-hover cursor-pointer m2 p2"
+                        className="text-grey-2 text-grey-4-hover cursor-pointer m2 p2 ml-auto"
                         name="close"
                         size={24}
                         onClick={onClose}
@@ -151,6 +151,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                     <EmbedTypePicker
                         className="flex-full"
                         onChangeEmbedType={(embedType) => this.setState({ embedType })}
+                        resourceType={resourceType}
                     />
                 : embedType === "simple" ?
                     <SimpleEmbedPane
