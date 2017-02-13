@@ -203,5 +203,12 @@
   (check-public-sharing-enabled)
   (db/select [Dashboard :name :id :public_uuid], :public_uuid [:not= nil]))
 
+(defendpoint GET "/embeddable"
+  "Fetch a list of Dashboards where `enable_embedding` is `true`. The dashboards can be embedded using the embedding endpoints and a signed JWT."
+  []
+  (check-superuser)
+  (check-embedding-enabled)
+  (db/select [Dashboard :name :id], :enable_embedding true))
+
 
 (define-routes)

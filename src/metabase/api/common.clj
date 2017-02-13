@@ -8,7 +8,8 @@
             [medley.core :as m]
             [toucan.db :as db]
             [metabase.api.common.internal :refer :all]
-            [metabase.models.interface :as mi]
+            (metabase.models [interface :as mi]
+                             [setting :as setting])
             [metabase.public-settings :as public-settings]
             [metabase.util :as u]))
 
@@ -306,6 +307,12 @@
   []
   (check (public-settings/enable-public-sharing)
     [400 "Public sharing is not enabled."]))
+
+(defn check-embedding-enabled
+  "Is embedding of Cards or Objects (secured access via `/api/embed` endpoints with a signed JWT enabled?"
+  []
+  (check (boolean (seq (setting/get :embedding-secret-key))) ; call `boolean` on it so this doesn't return value of the secret if call succeeds
+    [400 "Embedding is not enabled."]))
 
 (defn check-not-archived
   "Check that the OBJECT is not `:archived`, or throw a `404`. Returns OBJECT as-is if check passes."

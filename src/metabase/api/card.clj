@@ -419,5 +419,12 @@
   (check-public-sharing-enabled)
   (db/select [Card :name :id :public_uuid], :public_uuid [:not= nil], :archived false))
 
+(defendpoint GET "/embeddable"
+  "Fetch a list of Cards where `enable_embedding` is `true`. The cards can be embedded using the embedding endpoints and a signed JWT."
+  []
+  (check-superuser)
+  (check-embedding-enabled)
+  (db/select [Card :name :id], :enable_embedding true, :archived false))
+
 
 (define-routes)
