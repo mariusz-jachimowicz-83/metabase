@@ -193,9 +193,15 @@ const SECTIONS = [
         name: "Embedding",
         settings: [
             {
+                key: "enable-embedding",
+                display_name: "Enable Embedding",
+                type: "boolean"
+            },
+            {
                 key: "embedding-secret-key",
                 display_name: "Embedding secret key",
-                widget: SecretKeyWidget
+                widget: SecretKeyWidget,
+                getHidden: (settings) => !settings["enable-embedding"]
             },
         ]
     }

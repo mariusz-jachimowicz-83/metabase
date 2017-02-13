@@ -88,6 +88,7 @@ export default class QueryVisualization extends Component {
         const isDirty = this.queryIsDirty();
         const isSaved = card.id != null;
         const isPublicLinksEnabled = MetabaseSettings.get("public_sharing");
+        const isEmbeddingEnabled = MetabaseSettings.get("embedding");
         return (
             <div className="relative flex flex-no-shrink mt3 mb1" style={{ minHeight: "2em" }}>
                 <span className="relative z4">
@@ -121,8 +122,7 @@ export default class QueryVisualization extends Component {
                             isAdmin={isAdmin}
                         />
                     : null }
-                    {/* FIXME: change isPublicLinksEnabled to isEmbeddingEnabled */}
-                    { isSaved && isPublicLinksEnabled && isAdmin ?
+                    { isSaved && isEmbeddingEnabled && isAdmin ?
                         <QuestionEmbedWidget
                             className="mx1"
                             card={card}

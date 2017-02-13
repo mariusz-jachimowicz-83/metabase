@@ -56,7 +56,12 @@
       (-site-url (or origin host))))
 
 (defsetting enable-public-sharing
-  "Enable admins to create publically viewable links for Cards and Dashboards?"
+  "Enable admins to create publically viewable links for Questions and Dashboards?"
+  :type    :boolean
+  :default false)
+
+(defsetting enable-embedding
+  "Enable admins to create embeddable Questions and Dashboards?"
   :type    :boolean
   :default false)
 
@@ -95,6 +100,7 @@
    :map_tile_server_url   (map-tile-server-url)
    :password_complexity   password/active-password-complexity
    :public_sharing        (enable-public-sharing)
+   :embedding             (enable-embedding)
    :report_timezone       (setting/get :report-timezone)
    :setup_token           ((resolve 'metabase.setup/token-value))
    :site_name             (site-name)

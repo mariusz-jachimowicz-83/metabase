@@ -135,6 +135,7 @@ export default class DashboardHeader extends Component {
         const canEdit = isEditable && !!dashboard;
 
         const isPublicLinksEnabled = MetabaseSettings.get("public_sharing");
+        const isEmbeddingEnabled = MetabaseSettings.get("embedding");
 
         const buttons = [];
 
@@ -235,9 +236,7 @@ export default class DashboardHeader extends Component {
             )
         }
 
-        // FIXME:
-        const isEmbeddingEnabled = isPublicLinksEnabled;
-        if (!isFullscreen && (isPublicLinksEnabled || isEmbeddingEnabled) && isAdmin) {
+        if (!isFullscreen && isEmbeddingEnabled && isAdmin) {
             buttons.push(
                 <DashboardEmbedWidget dashboard={dashboard} />
             )
