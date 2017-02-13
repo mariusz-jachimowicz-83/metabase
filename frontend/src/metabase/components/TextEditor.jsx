@@ -29,6 +29,7 @@ export default class TextEditor extends Component {
     componentWillReceiveProps(nextProps) {
         if (this._editor && nextProps.value != null && nextProps.value !== this._editor.getValue()) {
             this._editor.setValue(nextProps.value);
+            this._editor.clearSelection();
         }
     }
 
