@@ -154,7 +154,7 @@
           :types          (constantly {:dataset_query          :json
                                        :description            :clob
                                        :display                :keyword
-                                       :enbedding_params       :json
+                                       :embedding_params       :json
                                        :query_type             :keyword
                                        :visualization_settings :json})
           :properties     (constantly {:timestamped? true})
