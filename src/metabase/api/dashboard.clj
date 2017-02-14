@@ -81,11 +81,12 @@
    embedding_params        (s/maybe su/EmbeddingParams)
    parameters              (s/maybe [su/Map])}
   (let [dash (write-check Dashboard id)]
-    ;; you must be a superuser to change the value of `enable_embedding` or `embedding_params`.
+    ;; you must be a superuser to change the value of `enable_embedding` or `embedding_params`. Embedding must be enabled
     (when (or (and (not (nil? enable_embedding))
                    (not= enable_embedding (:enable_embedding dash)))
               (and embedding_params
                    (not= embedding_params (:embedding_params dash))))
+      (check-embedding-enabled)
       (check-superuser)))
   (check-500 (-> (assoc dashboard :id id)
                  (dashboard/update-dashboard! *current-user-id*))))

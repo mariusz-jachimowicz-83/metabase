@@ -245,11 +245,12 @@
     (when (and (false? archived)
                (:archived card))
       (check-data-permissions-for-query (:dataset_query card)))
-    ;; you must be a superuser to change the value of `enable_embedding` or `embedding_params`.
+    ;; you must be a superuser to change the value of `enable_embedding` or `embedding_params`. Embedding must be enabled
     (when (or (and (not (nil? enable_embedding))
                    (not= enable_embedding (:enable_embedding card)))
               (and embedding_params
                    (not= embedding_params (:embedding_params card))))
+      (check-embedding-enabled)
       (check-superuser))
     ;; ok, now save the Card
     (db/update! Card id

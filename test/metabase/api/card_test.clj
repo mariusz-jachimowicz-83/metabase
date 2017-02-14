@@ -232,7 +232,6 @@
      (do ((user->client :rasta) :put 200 (str "card/" card-id) {:name updated-name})
          (db/select-one-field :name Card, :id card-id))]))
 
-
 (defmacro ^:private with-temp-card {:style/indent 1} [binding & body]
   `(tt/with-temp Card ~binding
      ~@body))
@@ -249,6 +248,27 @@
        (set-archived! true)
        (set-archived! false)])))
 
+;; Can we update a card's embedding_params?
+(expect
+  {:abc "enabled"}
+  (with-temp-card [card]
+    (tu/with-temporary-setting-values [enable-embedding true]
+      ((user->client :crowberto) :put 200 (str "card/" (u/get-id card)) {:embedding_params {:abc "enabled"}}))
+    (db/select-one-field :embedding_params Card :id (u/get-id card))))
+
+;; We shouldn't be able to update them if we're not an admin...
+(expect
+  "You don't have permissions to do that."
+  (with-temp-card [card]
+    (tu/with-temporary-setting-values [enable-embedding true]
+      ((user->client :rasta) :put 403 (str "card/" (u/get-id card)) {:embedding_params {:abc "enabled"}}))))
+
+;; ...or if embedding isn't enabled
+(expect
+  "Embedding is not enabled."
+  (with-temp-card [card]
+    (tu/with-temporary-setting-values [enable-embedding false]
+      ((user->client :crowberto) :put 400 (str "card/" (u/get-id card)) {:embedding_params {:abc "enabled"}}))))
 
 ;; ## DELETE /api/card/:id
 ;; Check that we can delete a card
