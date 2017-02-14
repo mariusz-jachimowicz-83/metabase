@@ -3,15 +3,13 @@
 import React, { Component, PropTypes } from "react";
 import RetinaImage from 'react-retina-image';
 
-import Button from "metabase/components/Button";
-
-import cx from "classnames"
-
 type Props = {
+    resourceType: string,
+    onChangeEmbedType: func
 };
 
-const EmbedTypePicker = ({ className, onChangeEmbedType, resourceType }: Props) =>
-    <div className={cx(className, "flex full layout-centered")}>
+const EmbedTypePicker = ({ onChangeEmbedType, resourceType }: Props) =>
+    <div className="flex full layout-centered">
         <div className="Grid Grid--1of2 bordered rounded">
             <div className="Grid-cell p4 cursor-pointer flex flex-column text-centered text-brand-hover" onClick={() => onChangeEmbedType("simple")}>
                 <div className="m3 py3 flex align-center justify-center" style={{ height: 140 }}>
@@ -40,6 +38,6 @@ const EmbedTypePicker = ({ className, onChangeEmbedType, resourceType }: Props) 
                 </div>
             </div>
         </div>
-    </div>
+    </div>;
 
 export default EmbedTypePicker;

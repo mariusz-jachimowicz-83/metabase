@@ -111,7 +111,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
     }
 
     render() {
-        const { className, siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
+        const { siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
         const { pane, embedType, embeddingParams, parameterValues, displayOptions } = this.state;
 
         const params = this.getPreviewParams();

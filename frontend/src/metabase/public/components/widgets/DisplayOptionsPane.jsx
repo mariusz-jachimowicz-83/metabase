@@ -10,10 +10,12 @@ const THEME_OPTIONS = [
     { name: "Dark", value: "night", icon: "moon" }
 ];
 
+/*
 const BORDER_OPTIONS = [
     { name: "Bordered", value: true },
     { name: "No border", value: false }
 ];
+*/
 
 const DisplayOptionsPane = ({ className, displayOptions, onChangeDisplayOptions }) =>
     <div className={className}>

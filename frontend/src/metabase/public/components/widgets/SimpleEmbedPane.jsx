@@ -9,9 +9,12 @@ import CodeSample from "./CodeSample"
 import { getPublicEmbedOptions } from "../../lib/code"
 
 type Props = {
+    iframeUrl: string,
+    displayOptions: object,
+    onChangeDisplayOptions: func
 };
 
-const SimpleEmbedPane = ({ className, iframeUrl, displayOptions, onChangeDisplayOptions }) =>
+const SimpleEmbedPane = ({ iframeUrl, displayOptions, onChangeDisplayOptions }: Props) =>
     <div>
         <div className="flex ml-auto mr-auto">
             <div className="flex-full flex flex-column">
