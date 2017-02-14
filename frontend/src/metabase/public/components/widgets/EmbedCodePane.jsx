@@ -9,6 +9,7 @@ import { getPublicEmbedOptions, getSignedEmbedOptions, getSignTokenOptions } fro
 
 import "metabase/lib/ace/theme-metabase";
 
+import "ace/mode-clojure";
 import "ace/mode-javascript";
 import "ace/mode-ruby";
 import "ace/mode-html";

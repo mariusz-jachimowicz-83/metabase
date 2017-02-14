@@ -12,8 +12,9 @@ export const getSignedEmbedOptions = () => [
 ];
 
 export const getSignTokenOptions = (params) => [
-    { name: "Node.js", source: () => node(params), mode: "ace/mode/javascript" },
-    { name: "Ruby",    source: () => ruby(params), mode: "ace/mode/ruby" },
+    { name: "Node.js", source: () => node(params),    mode: "ace/mode/javascript" },
+    { name: "Ruby",    source: () => ruby(params),    mode: "ace/mode/ruby" },
+    { name: "Clojure", source: () => clojure(params), mode: "ace/mode/clojure" },
 ];
 
 const html = ({ iframeUrl }) =>
@@ -66,4 +67,19 @@ payload = {
 token = JWT.encode payload, METABASE_SECRET_KEY
 
 iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token${optionsToHashParams(displayOptions) ? " + " + JSON.stringify(optionsToHashParams(displayOptions)) : "" }
+`;
+
+const clojure = ({ siteUrl, secretKey, resourceType, resourceId, params, displayOptions }) =>
+`(require '[buddy.sign.jwt :as jwt])
+
+(def metabase-site-url   ${JSON.stringify(siteUrl)})
+(def metabase-secret-key ${JSON.stringify(secretKey)})
+
+(def payload
+  {:resource {:${resourceType} ${resourceId}}
+   :params   {${Object.entries(params).map(([key,value]) => JSON.stringify(key) + JSON.stringify(value)).join(",\n              ")}}})
+
+(def token (jwt/sign payload metabase-secret-key))
+
+(def iframe-url (str metabase-site-url "/embed/${resourceType}/" token${optionsToHashParams(displayOptions) ? (" " + JSON.stringify(optionsToHashParams(displayOptions))) : ""}))
 `;
