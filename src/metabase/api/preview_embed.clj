@@ -1,4 +1,12 @@
 (ns metabase.api.preview-embed
+  "Endpoints for previewing how Cards and Dashboards will look when embedding them.
+   These endpoints are basically identical in functionality to the ones in `/api/embed`, but:
+
+   1.  Require admin access
+   2.  Ignore the values of `:enabled_embedding` for Cards/Dashboards
+   3.  Ignore the `:embed_params` whitelist for Card/Dashboards, instead using a field called `:_embedding_params` in the JWT token itself.
+
+   Refer to the documentation for those endpoints for further details."
   (:require [compojure.core :refer [GET]]
             (metabase.api [common :as api]
                           [embed :as embed-api]
@@ -11,7 +19,7 @@
   (eu/unsign token))
 
 (api/defendpoint GET "/card/:token"
-  "Preview how an embedded Card will by passing a JWT TOKEN."
+  "Fetch a Card you're considering embedding by passing a JWT TOKEN."
   [token]
   (let [unsigned-token (check-and-unsign token)
         card-id        (eu/get-in-unsigned-token-or-throw unsigned-token [:resource :question])
@@ -22,6 +30,7 @@
         (embed-api/remove-token-parameters token-params))))
 
 (api/defendpoint GET "/card/:token/query"
+  "Fetch the query results for a Card you're considering embedding by passing a JWT TOKEN."
   [token & query-params]
   (let [unsigned-token   (check-and-unsign token)
         card-id          (eu/get-in-unsigned-token-or-throw unsigned-token [:resource :question])
@@ -32,6 +41,7 @@
     (public-api/run-query-for-card-with-id card-id parameters)))
 
 (api/defendpoint GET "/dashboard/:token"
+  "Fetch a Dashboard you're considering embedding by passing a JWT TOKEN. "
   [token]
   (let [unsigned     (check-and-unsign token)
         id           (eu/get-in-unsigned-token-or-throw unsigned [:resource :dashboard])
@@ -41,6 +51,7 @@
         (embed-api/remove-token-parameters token-params))))
 
 (api/defendpoint GET "/dashboard/:token/dashcard/:dashcard-id/card/:card-id"
+  "Fetch the results of running a Card belonging to a Dashboard you're considering embedding with JWT TOKEN."
   [token dashcard-id card-id & query-params]
   (let [unsigned-token   (check-and-unsign token)
         dashboard-id     (eu/get-in-unsigned-token-or-throw unsigned-token [:resource :dashboard])
