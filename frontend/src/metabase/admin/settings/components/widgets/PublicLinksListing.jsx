@@ -64,7 +64,7 @@ export default class PublicLinksListing extends Component<*, Props, State> {
     }
 
     render() {
-        const { getUrl, getPublicUrl } = this.props;
+        const { getUrl, getPublicUrl, revoke } = this.props;
         let { list, error } = this.state;
 
         if (list && list.length === 0) {
@@ -78,8 +78,12 @@ export default class PublicLinksListing extends Component<*, Props, State> {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Public Link</th>
-                            <th>Revoke Link</th>
+                            { getPublicUrl &&
+                                <th>Public Link</th>
+                            }
+                            { revoke &&
+                                <th>Revoke Link</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -90,23 +94,27 @@ export default class PublicLinksListing extends Component<*, Props, State> {
                                         {link.name}
                                     </Link>
                                 </td>
-                                <td>
-                                    <ExternalLink href={getPublicUrl(link)}>
-                                        {getPublicUrl(link)}
-                                    </ExternalLink>
-                                </td>
-                                <td className="flex layout-centered">
-                                    <Confirm
-                                        title="Disable this link?"
-                                        content="They won't work any more, and can't be restored, but you can create new links."
-                                        action={() => this.revoke(link)}
-                                    >
-                                        <Icon
-                                            name="close"
-                                            className="text-grey-2 text-grey-4-hover cursor-pointer"
-                                        />
-                                    </Confirm>
-                                </td>
+                                { getPublicUrl &&
+                                    <td>
+                                        <ExternalLink href={getPublicUrl(link)}>
+                                            {getPublicUrl(link)}
+                                        </ExternalLink>
+                                    </td>
+                                }
+                                { revoke &&
+                                    <td className="flex layout-centered">
+                                        <Confirm
+                                            title="Disable this link?"
+                                            content="They won't work any more, and can't be restored, but you can create new links."
+                                            action={() => this.revoke(link)}
+                                        >
+                                            <Icon
+                                                name="close"
+                                                className="text-grey-2 text-grey-4-hover cursor-pointer"
+                                            />
+                                        </Confirm>
+                                    </td>
+                                }
                             </tr>
                         ) }
                     </tbody>
@@ -131,4 +139,16 @@ export const PublicLinksQuestionListing = () =>
         revoke={CardApi.deletePublicLink}
         getUrl={({ id }) => Urls.card(id)}
         getPublicUrl={({ public_uuid }) => window.location.origin + Urls.publicCard(public_uuid)}
+    />;
+
+export const EmbeddedDashboardListing = () =>
+    <PublicLinksListing
+        load={DashboardApi.listEmbeddable}
+        getUrl={({ id }) => Urls.dashboard(id)}
+    />;
+
+export const EmbeddedQuestionListing = () =>
+    <PublicLinksListing
+        load={CardApi.listEmbeddable}
+        getUrl={({ id }) => Urls.card(id)}
     />;

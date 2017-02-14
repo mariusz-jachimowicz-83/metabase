@@ -26,6 +26,7 @@ export const CardApi = {
     updateLabels:               POST("/api/card/:cardId/labels"),
 
     listPublic:                  GET("/api/card/public"),
+    listEmbeddable:              GET("/api/card/embeddable"),
     createPublicLink:           POST("/api/card/:id/public_link"),
     deletePublicLink:         DELETE("/api/card/:id/public_link"),
 };
@@ -41,6 +42,7 @@ export const DashboardApi = {
     reposition_cards:            PUT("/api/dashboard/:dashId/cards"),
 
     listPublic:                  GET("/api/dashboard/public"),
+    listEmbeddable:              GET("/api/dashboard/embeddable"),
     createPublicLink:           POST("/api/dashboard/:id/public_link"),
     deletePublicLink:         DELETE("/api/dashboard/:id/public_link"),
 };

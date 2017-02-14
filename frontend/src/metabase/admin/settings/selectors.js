@@ -5,7 +5,12 @@ import MetabaseSettings from "metabase/lib/settings";
 import { slugify } from "metabase/lib/formatting";
 
 import CustomGeoJSONWidget from "./components/widgets/CustomGeoJSONWidget.jsx";
-import { PublicLinksDashboardListing, PublicLinksQuestionListing } from "./components/widgets/PublicLinksListing.jsx";
+import {
+    PublicLinksDashboardListing,
+    PublicLinksQuestionListing,
+    EmbeddedQuestionListing,
+    EmbeddedDashboardListing
+} from "./components/widgets/PublicLinksListing.jsx";
 import SecretKeyWidget from "./components/widgets/SecretKeyWidget.jsx";
 
 const SECTIONS = [
@@ -203,6 +208,18 @@ const SECTIONS = [
                 widget: SecretKeyWidget,
                 getHidden: (settings) => !settings["enable-embedding"]
             },
+            {
+                key: "-embedded-dashboards",
+                display_name: "Embedded Dashboards",
+                widget: EmbeddedDashboardListing,
+                getHidden: (settings) => !settings["enable-embedding"]
+            },
+            {
+                key: "-embedded-questions",
+                display_name: "Embedded Questions",
+                widget: EmbeddedQuestionListing,
+                getHidden: (settings) => !settings["enable-embedding"]
+            }
         ]
     }
 ];
