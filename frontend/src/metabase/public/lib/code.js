@@ -77,7 +77,7 @@ const clojure = ({ siteUrl, secretKey, resourceType, resourceId, params, display
 
 (def payload
   {:resource {:${resourceType} ${resourceId}}
-   :params   {${Object.entries(params).map(([key,value]) => JSON.stringify(key) + JSON.stringify(value)).join(",\n              ")}}})
+   :params   {${Object.entries(params).map(([key,value]) => JSON.stringify(key) + " " + JSON.stringify(value)).join(",\n              ")}}})
 
 (def token (jwt/sign payload metabase-secret-key))
 
