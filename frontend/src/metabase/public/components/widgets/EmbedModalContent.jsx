@@ -130,8 +130,8 @@ export default class EmbedModalContent extends Component<*, Props, State> {
             <div
                 className={cx(className, "flex flex-column p4")}
             >
-                <div className="flex layout-centered relative">
-                    <h2>
+                <div className="flex align-center">
+                    <h2 className="ml-auto">
                         { embedType == null ?
                             <a onClick={() => this.setState({ embedType: null })}>Embed</a>
                         : embedType === "simple" ?
@@ -141,7 +141,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                         : null}
                     </h2>
                     <Icon
-                        className="text-grey-2 text-grey-4-hover cursor-pointer m2 p2 ml-auto"
+                        className="text-grey-2 text-grey-4-hover cursor-pointer p2 ml-auto"
                         name="close"
                         size={24}
                         onClick={onClose}
