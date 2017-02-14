@@ -49,7 +49,11 @@
   (or (get-in unsigned-token keyseq)
       (throw (ex-info (str "Token is missing value for keypath" keyseq) {:status-code 400}))))
 
-(defn- check-embedding-enabled [object]
+
+(defn- check-embedding-enabled
+  "Check that embedding is enabled, that OBJECT exists, and embedding for OBJECT is enabled."
+  [object]
+  (api/check-embedding-enabled)
   (api/check-404 object)
   (api/check (:enable_embedding object)
     [400 "Embedding is not enabled for this object."]))
@@ -108,15 +112,15 @@
 
 
 (defn- resolve-dashboard-parameters
-  "Returns parameters for a card on a dashboard with :target resolved via :parameter_mappings"
+  "Returns parameters for a card on a dashboard with `:target` resolved via `:parameter_mappings`."
   [dashboard-id dashcard-id card-id]
-  ;; FIXME: validate the card is actually in the dashcard which is actually in the dashboard otherwise
-  ;; an attacker could bypass a required a parameter!
-  (let [parameters (u/key-by :id (db/select-one-field :parameters Dashboard :id dashboard-id))]
-    (->> (db/select-one-field :parameter_mappings DashboardCard :id dashcard-id)
-         (filter #(= card-id (:card_id %)))
-         (map #(assoc (get parameters (:parameter_id %)) :target (:target %)))
-         (remove nil?))))
+  (let [param-id->param (u/key-by :id (db/select-one-field :parameters Dashboard :id dashboard-id))]
+    ;; throw a 404 if there's no matching DashboardCard so people can't get info about other Cards that aren't in this Dashboard
+    (for [param-mapping (api/check-404 (db/select-one-field :parameter_mappings DashboardCard :id dashcard-id, :dashboard_id dashboard-id, :card_id card-id))
+          :when         (= (:card_id param-mapping) card-id)
+          :let          [param (get param-id->param (:parameter_id param-mapping))]
+          :when         param]
+      (assoc param :target (:target param-mapping)))))
 
 
 ;;; ------------------------------------------------------------ Cards ------------------------------------------------------------
@@ -131,12 +135,15 @@
   (let [unsigned-token (unsign token)
         id             (get-in-unsigned-token-or-throw unsigned-token [:resource :question])
         token-params   (get-in-unsigned-token-or-throw unsigned-token [:params])]
+    (check-embedding-enabled-for-card id)
     (-> (public-api/public-card :id id, :enable_embedding true)
         add-implicit-card-parameters
         (remove-token-parameters token-params))))
 
 
-(defn- run-query-for-unsigned-token [unsigned-token query-params & options]
+(defn- run-query-for-unsigned-token
+  "Run the query belonging to Card identified by UNSIGNED-TOKEN. Checks that embedding is enabled both globally and for this Card."
+  [unsigned-token query-params & options]
   (let [card-id          (get-in-unsigned-token-or-throw unsigned-token [:resource :question])
         token-params     (get-in-unsigned-token-or-throw unsigned-token [:params])
         ;; TODO: validate required signed parameters are present in token-params (once that is configurable by the admin)
@@ -181,6 +188,7 @@
   (let [unsigned     (unsign token)
         id           (get-in-unsigned-token-or-throw unsigned [:resource :dashboard])
         token-params (get-in-unsigned-token-or-throw unsigned [:params])]
+    (check-embedding-enabled-for-dashboard id)
     (-> (public-api/public-dashboard :id id, :enable_embedding true)
         (remove-token-parameters token-params))))
 
