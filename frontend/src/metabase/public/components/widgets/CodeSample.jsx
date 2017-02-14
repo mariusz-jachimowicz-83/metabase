@@ -44,7 +44,7 @@ export default class CodeSample extends Component<*, Props, State> {
                         <h4>{title}</h4>
                         { options && options.length > 1 ?
                             <Select
-                                className="AdminSelect--borderless ml-auto"
+                                className="AdminSelect--borderless ml-auto pt1 pb1"
                                 value={name}
                                 onChange={(e) => this.setState({ name: e.target.value })}
                             >
