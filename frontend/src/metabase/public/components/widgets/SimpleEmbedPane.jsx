@@ -8,22 +8,22 @@ import CodeSample from "./CodeSample"
 
 import { getPublicEmbedOptions } from "../../lib/code"
 
-import cx from "classnames"
-
 type Props = {
 };
 
 const SimpleEmbedPane = ({ className, iframeUrl, displayOptions, onChangeDisplayOptions }) =>
-    <div className={cx(className, "flex")}>
-        <div className="flex-full flex flex-column">
-            <PreviewPane className="flex-full mb2" previewUrl={iframeUrl} />
-            <CodeSample options={getPublicEmbedOptions({ iframeUrl })} />
+    <div>
+        <div className="flex ml-auto mr-auto">
+            <div className="flex-full flex flex-column">
+                <PreviewPane className="flex-full mb2" previewUrl={iframeUrl} />
+                <CodeSample options={getPublicEmbedOptions({ iframeUrl })} />
+            </div>
+            <DisplayOptionsPane
+                className="m4"
+                displayOptions={displayOptions}
+                onChangeDisplayOptions={onChangeDisplayOptions}
+            />
         </div>
-        <DisplayOptionsPane
-            className="m4"
-            displayOptions={displayOptions}
-            onChangeDisplayOptions={onChangeDisplayOptions}
-        />
     </div>;
 
 export default SimpleEmbedPane;

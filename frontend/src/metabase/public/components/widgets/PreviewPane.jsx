@@ -21,7 +21,7 @@ export default class PreviewPane extends Component {
     render() {
         const { className, previewUrl } = this.props;
         return (
-            <div className={cx(className, "flex relative")}>
+            <div className={cx(className, "flex relative")} style={{ minHeight: 280 }}>
                 <iframe
                     className="flex-full"
                     src={previewUrl}

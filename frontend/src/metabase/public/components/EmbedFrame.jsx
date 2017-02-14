@@ -2,9 +2,7 @@
 
 import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
-import { withRouter } from "react-router";
-
-import { IFRAMED } from "metabase/lib/dom";
+import { withRouter } from "react-router"; import { IFRAMED } from "metabase/lib/dom";
 
 import Parameters from "metabase/dashboard/containers/Parameters";
 import LogoBadge from "./LogoBadge";
@@ -52,7 +50,7 @@ export default class EmbedFrame extends Component<*, Props, *> {
 
         return (
             <div className={cx("EmbedFrame flex flex-column", className, {
-                "bordered rounded shadowed m1": bordered,
+                "bordered rounded shadowed": bordered,
                 [`Theme--${theme}`]: !!theme
             })}>
                 <div className="flex flex-column flex-full scroll-y relative">
@@ -80,7 +78,7 @@ export default class EmbedFrame extends Component<*, Props, *> {
                 </div>
                 { footer &&
                     <div className="EmbedFrame-footer p1 md-p2 lg-p3 border-top flex-no-shrink flex align-center">
-                        <LogoBadge logoClassName="sm-show" />
+                        <LogoBadge dark={theme} />
                         {actionButtons &&
                             <div className="flex-align-right text-grey-3">{actionButtons}</div>
                         }
