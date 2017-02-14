@@ -2,6 +2,7 @@
 
 import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
+import { titleize } from "inflection";
 
 import SimpleEmbedPane from "./SimpleEmbedPane";
 import AdvancedEmbedPane from "./AdvancedEmbedPane";
@@ -14,7 +15,6 @@ import EmbedTypePicker from "./EmbedTypePicker";
 import { getSignedPreviewUrl, getUnsignedPreviewUrl, getSignedToken } from "metabase/public/lib/embed";
 
 import { getSiteUrl, getEmbeddingSecretKey } from "metabase/selectors/settings";
-import cx from "classnames";
 
 import type { Parameter, ParameterId } from "metabase/meta/types/Dashboard";
 
@@ -130,13 +130,10 @@ export default class EmbedModalContent extends Component<*, Props, State> {
             <div className="p4 flex flex-column full-height">
                 <div className="flex align-center mb4">
                     <h2 className="ml-auto">
-                        { embedType == null ?
-                            <a onClick={() => this.setState({ embedType: null })}>Embed</a>
-                        : embedType === "simple" ?
-                            <a onClick={() => this.setState({ embedType: null })}>Embed -> Simple</a>
-                        : embedType === "secure" ?
-                            <a onClick={() => this.setState({ embedType: null })}>Embed -> Secure</a>
-                        : null}
+                        <EmbedTitle
+                            onClick={() => this.setState({ embedType: null })}
+                            type={embedType && titleize(embedType)}
+                        />
                     </h2>
                     <Icon
                         className="text-grey-2 text-grey-4-hover cursor-pointer p2 ml-auto"
@@ -187,3 +184,10 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         );
     }
 }
+
+const EmbedTitle = ({ type, onClick }) =>
+    <a className="flex align-center" onClick={onClick}>
+        <span className="text-brand-hover">Embed</span>
+        { type && <Icon name="chevronright" className="mx1 text-grey-3" /> }
+        {type}
+    </a>;
