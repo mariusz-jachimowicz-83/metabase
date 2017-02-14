@@ -168,7 +168,7 @@ const SECTIONS = [
         ]
     },
     {
-        name: "Public Links",
+        name: "Public Sharing",
         settings: [
             {
                 key: "enable-public-sharing",
@@ -190,11 +190,11 @@ const SECTIONS = [
         ]
     },
     {
-        name: "Embedding",
+        name: "Embedding in other Applications",
         settings: [
             {
                 key: "enable-embedding",
-                display_name: "Enable Embedding",
+                display_name: "Enable Embedding Metabase in other Applications",
                 type: "boolean"
             },
             {

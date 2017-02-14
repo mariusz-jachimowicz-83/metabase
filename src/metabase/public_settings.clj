@@ -56,12 +56,12 @@
       (-site-url (or origin host))))
 
 (defsetting enable-public-sharing
-  "Enable admins to create publically viewable links for Questions and Dashboards?"
+  "Enable admins to create publically viewable links (and embeddable iframes) for Questions and Dashboards?"
   :type    :boolean
   :default false)
 
 (defsetting enable-embedding
-  "Enable admins to create embeddable Questions and Dashboards?"
+  "Allow admins to securely embed cards and dashboards within other applications?"
   :type    :boolean
   :default false)
 
