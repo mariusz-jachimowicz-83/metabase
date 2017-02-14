@@ -20,7 +20,6 @@ export default class PreviewPane extends Component {
 
     render() {
         const { className, previewUrl } = this.props;
-        const { loading } = this.state;
         return (
             <div className={cx(className, "flex relative")}>
                 <iframe
@@ -30,9 +29,6 @@ export default class PreviewPane extends Component {
                     allowTransparency
                     onLoad={() => this.setState({ loading: false })}
                 />
-                { loading &&
-                    <div className="spread bordered rounded" />
-                }
             </div>
         );
     }

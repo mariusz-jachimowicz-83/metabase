@@ -162,6 +162,8 @@ export default class PublicQuestion extends Component<*, Props, State> {
                         }
                         gridUnit={12}
                         linkToCard={false}
+                        showTitle={false}
+                        isDashboard
                     />
                 }
                 </LoadingAndErrorWrapper>

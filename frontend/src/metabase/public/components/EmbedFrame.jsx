@@ -52,14 +52,14 @@ export default class EmbedFrame extends Component<*, Props, *> {
 
         return (
             <div className={cx("EmbedFrame flex flex-column", className, {
-                "bordered rounded shadowed": bordered,
+                "bordered rounded shadowed m1": bordered,
                 [`Theme--${theme}`]: !!theme
             })}>
                 <div className="flex flex-column flex-full scroll-y relative">
                     { name || (parameters && parameters.length > 0) ?
-                        <div className="flex align-center px1 pt1 pb0 sm-px2 sm-pt2 sm-pb0 lg-px3 lg-pt3 lg-pb1 bg-white">
+                        <div className="EmbedFrame-header flex align-center p1 sm-p2 lg-p3">
                             { name && (
-                                <div className="h4 text-bold sm-h3 md-h2 text-dark">{name}</div>
+                                <div className="h4 text-bold sm-h3 md-h2">{name}</div>
                             )}
                             { parameters && parameters.length > 0 ?
                                 <div className="flex ml-auto">
@@ -74,7 +74,7 @@ export default class EmbedFrame extends Component<*, Props, *> {
                             : null }
                         </div>
                     : null }
-                    <div className="flex flex-column relative full flex-full px1">
+                    <div className="flex flex-column relative full flex-full">
                         {children}
                     </div>
                 </div>
