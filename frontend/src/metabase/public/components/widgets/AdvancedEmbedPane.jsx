@@ -44,7 +44,7 @@ const AdvancedEmbedPane = ({
         <div className={"flex-full flex"}>
             <div className="flex-full flex flex-column">
                 { embedType === "secure" && previewParameters.length > 0 &&
-                    <div className="mt4 bordered rounded bg-white p2">
+                    <div className="mb2 bordered rounded bg-white p2">
                         <h3 className="mb2">Preview Locked Parameters</h3>
                         <Parameters
                             parameters={previewParameters}

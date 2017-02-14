@@ -77,10 +77,9 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
     handleSave = async () => {
         try {
-            await require("metabase/lib/promise").delay(1000);
             const { resource } = this.props;
-            const { secure, embeddingParams } = this.state;
-            if (secure) {
+            const { embeddingParams, embedType } = this.state;
+            if (embedType === "secure") {
                 if (!resource.enable_embedding) {
                     await this.props.onUpdateEnableEmbedding(true);
                 }
@@ -101,10 +100,10 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         const { embeddingParams, parameterValues } = this.state;
         const params = {};
         for (const parameter of resourceParameters) {
-            if (embeddingParams[parameter.slug] === "locked" || embeddingParams[parameter.slug] === "enabled") {
+            if (embeddingParams[parameter.slug] === "locked") {
                 params[parameter.slug] = (parameter.id in parameterValues) ?
                     parameterValues[parameter.id] :
-                    parameter.slug.toUpperCase();
+                    null;
             }
         }
         return params;
@@ -124,7 +123,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         }
         const token = getSignedToken(resourceType, resource.id, params, secretKey, embeddingParams);
 
-        const previewParameters = resourceParameters.filter(p => embeddingParams[p.slug] === "enabled" || embeddingParams[p.slug] === "locked");
+        const previewParameters = resourceParameters.filter(p => embeddingParams[p.slug] === "locked");
 
         return (
             <div className="p4 flex flex-column full-height">
@@ -176,7 +175,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                                 embeddingParams={embeddingParams}
                                 onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
                                 onChangeEmbeddingParameters={(embeddingParams) => this.setState({ embeddingParams })}
-                                onChangeParameterValue={(id, value) => this.setState({ ...parameterValues, [id]: value })}
+                                onChangeParameterValue={(id, value) => this.setState({ parameterValues: { ...parameterValues, [id]: value }})}
                                 onChangePane={(pane) => this.setState({ pane })}
                                 onSave={this.handleSave}
                             />
