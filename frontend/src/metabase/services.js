@@ -2,6 +2,11 @@
 
 import { GET, PUT, POST, DELETE } from "metabase/lib/api";
 
+import { IFRAMED_IN_METABASE } from "metabase/lib/dom";
+
+// use different endpoints for embed previews
+const embedBase = IFRAMED_IN_METABASE ? "/api/preview_embed" : "/api/embed";
+
 // $FlowFixMe: Flow doesn't understand webpack loader syntax
 import getGAMetadata from "promise-loader?global!metabase/lib/ga-metadata"; // eslint-disable-line import/default
 
@@ -12,7 +17,7 @@ export const ActivityApi = {
 
 export const CardApi = {
     list:                        GET("/api/card", (cards, { data }) =>
-                                    // support for the "q" query param until backend implements it
+                                    // HACK: support for the "q" query param until backend implements it
                                     cards.filter(card => !data.q || card.name.toLowerCase().indexOf(data.q.toLowerCase()) >= 0)
                                  ),
     create:                     POST("/api/card"),
@@ -48,7 +53,7 @@ export const DashboardApi = {
 };
 
 export const CollectionsApi = {
-    list:                        GET("/api/collection"),//  () => []),
+    list:                        GET("/api/collection"),
     create:                     POST("/api/collection"),
     get:                         GET("/api/collection/:id"),
     update:                      PUT("/api/collection/:id"),
@@ -65,10 +70,10 @@ export const PublicApi = {
 };
 
 export const EmbedApi = {
-    card:                        GET("/api/embed/card/:token"),
-    cardQuery:                   GET("/api/embed/card/:token/query"),
-    dashboard:                   GET("/api/embed/dashboard/:token"),
-    dashboardCardQuery:          GET("/api/embed/dashboard/:token/dashcard/:dashcardId/card/:cardId")
+    card:                        GET(embedBase + "/card/:token"),
+    cardQuery:                   GET(embedBase + "/card/:token/query"),
+    dashboard:                   GET(embedBase + "/dashboard/:token"),
+    dashboardCardQuery:          GET(embedBase + "/dashboard/:token/dashcard/:dashcardId/card/:cardId")
 };
 
 export const EmailApi = {

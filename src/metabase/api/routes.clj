@@ -16,6 +16,7 @@
                           [metric :as metric]
                           [notify :as notify]
                           [permissions :as permissions]
+                          [preview-embed :as preview-embed]
                           [public :as public]
                           [pulse :as pulse]
                           [revision :as revision]
@@ -57,6 +58,7 @@
   (context "/metric"          [] (+auth metric/routes))
   (context "/notify"          [] (+apikey notify/routes))
   (context "/permissions"     [] (+auth permissions/routes))
+  (context "/preview_embed"   [] (+auth preview-embed/routes))
   (context "/public"          [] public/routes)
   (context "/pulse"           [] (+auth pulse/routes))
   (context "/revision"        [] (+auth revision/routes))

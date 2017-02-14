@@ -16,7 +16,6 @@
        :params   <params>}"
   ;; TODO - switch resource.question back to resource.card
   (:require [clojure.tools.logging :as log]
-            [buddy.sign.jwt :as jwt]
             [compojure.core :refer [GET]]
             [toucan.db :as db]
             (metabase.api [common :as api]
@@ -26,29 +25,11 @@
                              [dashboard :refer [Dashboard]]
                              [dashboard-card :refer [DashboardCard]])
             [metabase.models.setting :as setting]
-            [metabase.util :as u]))
+            [metabase.util :as u]
+            [metabase.util.embed :as eu]))
 
 
 ;;; ------------------------------------------------------------ Setting & Util Fns ------------------------------------------------------------
-
-(setting/defsetting ^:private embedding-secret-key
-  "Secret key used to sign JSON Web Tokens for requests to `/api/embed` endpoints."
-  :setter (fn [new-value]
-            (when (seq new-value)
-              (assert (re-matches #"[0-9a-f]{64}" new-value)
-                "Invalid embedding-secret-key! Secret key must be a hexadecimal-encoded 256-bit key (i.e., a 64-character string)."))
-            (setting/set-string! :embedding-secret-key new-value)))
-
-
-(defn- unsign [^String message]
-  (when (seq message)
-    (jwt/unsign message (or (embedding-secret-key)
-                            (throw (ex-info "The embedding secret key has not been set." {:status-code 400}))))))
-
-(defn- get-in-unsigned-token-or-throw [unsigned-token keyseq]
-  (or (get-in unsigned-token keyseq)
-      (throw (ex-info (str "Token is missing value for keypath" keyseq) {:status-code 400}))))
-
 
 (defn- check-embedding-enabled
   "Check that embedding is enabled, that OBJECT exists, and embedding for OBJECT is enabled."
@@ -67,8 +48,7 @@
 
 ;;; ------------------------------------------------------------ Param Util Fns ------------------------------------------------------------
 
-
-(defn- remove-token-parameters
+(defn remove-token-parameters
   "Removes any parameters with slugs matching keys provided in token-params, as these should not be exposed to the user."
   [dashboard-or-card token-params]
   (update dashboard-or-card :parameters (partial remove (comp (partial contains? token-params) keyword :slug)))) ; grab :slug, convert to kw, remove if in token-params
@@ -88,12 +68,13 @@
      :default (:default tag)}))
 
 
-(defn- add-implicit-card-parameters
+(defn add-implicit-card-parameters
+  "Add template tag parameter information to CARD's `:parameters`."
   [card]
   (update card :parameters concat (template-tag-parameters card)))
 
 
-(defn- apply-parameter-values
+(defn apply-parameter-values
   "Adds `value` to parameters with `slug` matching a key in `parameter-values` and removes parameters without a `value`"
   [parameters parameter-values]
   (for [param parameters
@@ -103,15 +84,15 @@
       :value value)))
 
 
-(defn- resolve-card-parameters
-  "Returns parameters for a card" ; TODO - better docstring
+(defn resolve-card-parameters
+  "Returns parameters for a card (HUH?)" ; TODO - better docstring
   [card-or-id]
   (-> (db/select-one [Card :dataset_query], :id (u/get-id card-or-id))
       add-implicit-card-parameters
       :parameters))
 
 
-(defn- resolve-dashboard-parameters
+(defn resolve-dashboard-parameters
   "Returns parameters for a card on a dashboard with `:target` resolved via `:parameter_mappings`."
   [dashboard-id dashcard-id card-id]
   (let [param-id->param (u/key-by :id (db/select-one-field :parameters Dashboard :id dashboard-id))]
@@ -132,21 +113,21 @@
 
      {:resource {:question <card-id>}}"
   [token]
-  (let [unsigned-token (unsign token)
-        id             (get-in-unsigned-token-or-throw unsigned-token [:resource :question])
-        token-params   (get-in-unsigned-token-or-throw unsigned-token [:params])]
-    (check-embedding-enabled-for-card id)
-    (-> (public-api/public-card :id id, :enable_embedding true)
+  (let [unsigned-token (eu/unsign token)
+        card-id        (eu/get-in-unsigned-token-or-throw unsigned-token [:resource :question])
+        token-params   (eu/get-in-unsigned-token-or-throw unsigned-token [:params])]
+    (check-embedding-enabled-for-card card-id)
+    (-> (public-api/public-card :id card-id, :enable_embedding true)
         add-implicit-card-parameters
         (remove-token-parameters token-params))))
 
 
-(defn- run-query-for-unsigned-token
+(defn run-query-for-unsigned-token
   "Run the query belonging to Card identified by UNSIGNED-TOKEN. Checks that embedding is enabled both globally and for this Card."
   [unsigned-token query-params & options]
-  (let [card-id          (get-in-unsigned-token-or-throw unsigned-token [:resource :question])
-        token-params     (get-in-unsigned-token-or-throw unsigned-token [:params])
-        ;; TODO: validate required signed parameters are present in token-params (once that is configurable by the admin)
+  (let [card-id          (eu/get-in-unsigned-token-or-throw unsigned-token [:resource :question])
+        token-params     (eu/get-in-unsigned-token-or-throw unsigned-token [:params])
+        ;; TODO - validate required signed parameters are present in token-params
         parameter-values (merge query-params token-params)
         parameters       (apply-parameter-values (resolve-card-parameters card-id) parameter-values)]
     (check-embedding-enabled-for-card card-id)
@@ -161,19 +142,19 @@
      {:resource {:question <card-id>}
       :params   <parameters>}"
   [token & query-params]
-  (run-query-for-unsigned-token (unsign token) query-params))
+  (run-query-for-unsigned-token (eu/unsign token) query-params))
 
 
 (api/defendpoint GET "/card/:token/query/csv"
   "Like `GET /api/embed/card/query`, but returns the results as CSV."
   [token & query-params]
-  (dataset-api/as-csv (run-query-for-unsigned-token (unsign token) query-params, :constraints nil)))
+  (dataset-api/as-csv (run-query-for-unsigned-token (eu/unsign token) query-params, :constraints nil)))
 
 
 (api/defendpoint GET "/card/:token/query/json"
   "Like `GET /api/embed/card/query`, but returns the results as JSOn."
   [token & query-params]
-  (dataset-api/as-json (run-query-for-unsigned-token (unsign token) query-params, :constraints nil)))
+  (dataset-api/as-json (run-query-for-unsigned-token (eu/unsign token) query-params, :constraints nil)))
 
 
 ;;; ------------------------------------------------------------ Dashboards ------------------------------------------------------------
@@ -185,10 +166,11 @@
 
      {:resource {:dashboard <dashboard-id>}}"
   [token]
-  (let [unsigned     (unsign token)
-        id           (get-in-unsigned-token-or-throw unsigned [:resource :dashboard])
-        token-params (get-in-unsigned-token-or-throw unsigned [:params])]
+  (let [unsigned     (eu/unsign token)
+        id           (eu/get-in-unsigned-token-or-throw unsigned [:resource :dashboard])
+        token-params (eu/get-in-unsigned-token-or-throw unsigned [:params])]
     (check-embedding-enabled-for-dashboard id)
+    ;; TODO - enforce params whitelist for dashboard
     (-> (public-api/public-dashboard :id id, :enable_embedding true)
         (remove-token-parameters token-params))))
 
@@ -203,9 +185,9 @@
 
    Additional dashboard parameters can be provided in the query string, but params in the JWT token take precedence."
   [token dashcard-id card-id & query-params]
-  (let [unsigned-token   (unsign token)
-        dashboard-id     (get-in-unsigned-token-or-throw unsigned-token [:resource :dashboard])
-        token-params     (get-in-unsigned-token-or-throw unsigned-token [:params])
+  (let [unsigned-token   (eu/unsign token)
+        dashboard-id     (eu/get-in-unsigned-token-or-throw unsigned-token [:resource :dashboard])
+        token-params     (eu/get-in-unsigned-token-or-throw unsigned-token [:params])
         ;; TODO: validate required signed parameters are present in token-params (once that is configurable by the admin)
         parameter-values (merge query-params token-params)
         parameters       (apply-parameter-values (resolve-dashboard-parameters dashboard-id dashcard-id card-id) parameter-values)]
