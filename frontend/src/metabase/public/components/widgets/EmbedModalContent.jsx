@@ -127,10 +127,8 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         const previewParameters = resourceParameters.filter(p => embeddingParams[p.slug] === "enabled" || embeddingParams[p.slug] === "locked");
 
         return (
-            <div
-                className={cx(className, "flex flex-column p4")}
-            >
-                <div className="flex align-center">
+            <div className="p4 flex flex-column full-height">
+                <div className="flex align-center mb4">
                     <h2 className="ml-auto">
                         { embedType == null ?
                             <a onClick={() => this.setState({ embedType: null })}>Embed</a>
@@ -147,42 +145,44 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                         onClick={onClose}
                     />
                 </div>
-                { embedType == null ?
-                    <EmbedTypePicker
-                        className="flex-full"
-                        onChangeEmbedType={(embedType) => this.setState({ embedType })}
-                        resourceType={resourceType}
-                    />
-                : embedType === "simple" ?
-                    <SimpleEmbedPane
-                        className="flex-full"
-                        iframeUrl={iframeUrl}
-                        displayOptions={displayOptions}
-                        onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
-                    />
-                : embedType === "secure" ?
-                    <AdvancedEmbedPane
-                        pane={pane}
-                        resource={resource}
-                        resourceType={resourceType}
-                        embedType={embedType}
-                        token={token}
-                        iframeUrl={iframeUrl}
-                        siteUrl={siteUrl}
-                        secretKey={secretKey}
-                        params={params}
-                        displayOptions={displayOptions}
-                        previewParameters={previewParameters}
-                        parameterValues={parameterValues}
-                        resourceParameters={resourceParameters}
-                        embeddingParams={embeddingParams}
-                        onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
-                        onChangeEmbeddingParameters={(embeddingParams) => this.setState({ embeddingParams })}
-                        onChangeParameterValue={(id, value) => this.setState({ ...parameterValues, [id]: value })}
-                        onChangePane={(pane) => this.setState({ pane })}
-                        onSave={this.handleSave}
-                    />
-                : null }
+                <div className="flex flex-full my4">
+                    <div className="flex-full ml-auto mr-auto" style={{ maxWidth: 1040 }}>
+                        { embedType == null ?
+                            <EmbedTypePicker
+                                onChangeEmbedType={(embedType) => this.setState({ embedType })}
+                                resourceType={resourceType}
+                            />
+                        : embedType === "simple" ?
+                            <SimpleEmbedPane
+                                iframeUrl={iframeUrl}
+                                displayOptions={displayOptions}
+                                onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
+                            />
+                        : embedType === "secure" ?
+                            <AdvancedEmbedPane
+                                pane={pane}
+                                resource={resource}
+                                resourceType={resourceType}
+                                embedType={embedType}
+                                token={token}
+                                iframeUrl={iframeUrl}
+                                siteUrl={siteUrl}
+                                secretKey={secretKey}
+                                params={params}
+                                displayOptions={displayOptions}
+                                previewParameters={previewParameters}
+                                parameterValues={parameterValues}
+                                resourceParameters={resourceParameters}
+                                embeddingParams={embeddingParams}
+                                onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
+                                onChangeEmbeddingParameters={(embeddingParams) => this.setState({ embeddingParams })}
+                                onChangeParameterValue={(id, value) => this.setState({ ...parameterValues, [id]: value })}
+                                onChangePane={(pane) => this.setState({ pane })}
+                                onSave={this.handleSave}
+                            />
+                    : null }
+                    </div>
+                </div>
             </div>
         );
     }

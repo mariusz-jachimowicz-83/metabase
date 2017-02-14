@@ -32,7 +32,7 @@ const AdvancedEmbedPane = ({
     onChangePane,
     onSave
 }: Props) =>
-    <div className="flex-full flex flex-column">
+    <div className="full flex flex-column">
         <ToggleLarge
             className="mb2"
             style={{ width: 244, height: 34 }}
