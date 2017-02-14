@@ -118,11 +118,11 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
         let iframeUrl;
         if (embedType === "secure") {
-            iframeUrl = getSignedPreviewUrl(siteUrl, resourceType, resource.id, params, displayOptions, secretKey);
+            iframeUrl = getSignedPreviewUrl(siteUrl, resourceType, resource.id, params, displayOptions, secretKey, embeddingParams);
         } else if (embedType === "simple") {
             iframeUrl = getUnsignedPreviewUrl(siteUrl, resourceType, resource.public_uuid, displayOptions);
         }
-        const token = getSignedToken(resourceType, resource.id, params, secretKey);
+        const token = getSignedToken(resourceType, resource.id, params, secretKey, embeddingParams);
 
         const previewParameters = resourceParameters.filter(p => embeddingParams[p.slug] === "enabled" || embeddingParams[p.slug] === "locked");
 

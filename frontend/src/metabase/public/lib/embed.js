@@ -1,21 +1,24 @@
 
-import KJUR from "jsrsasign";
 import querystring from "querystring";
 
-export function getSignedToken(resourceType, resourceId, params = {}, secretKey) {
-    // using jsrsasign because jsonwebtoken doesn't work on the web :-/
-    return KJUR.jws.JWS.sign(null, {
-        alg: "HS256",
-        typ: "JWT"
-    }, {
+// using jsrsasign because jsonwebtoken doesn't work on the web :-/
+import KJUR from "jsrsasign";
+
+export function getSignedToken(resourceType, resourceId, params = {}, secretKey, previewEmbeddingParams) {
+    const unsignedToken = {
         resource: { [resourceType]: resourceId },
         params: params,
         iat: Math.round(new Date().getTime() / 1000)
-    }, { utf8: secretKey });
+    };
+    // include the `embedding_params` settings inline in the token for previews
+    if (previewEmbeddingParams) {
+        unsignedToken._embedding_params = previewEmbeddingParams;
+    }
+    return KJUR.jws.JWS.sign(null, { alg: "HS256", typ: "JWT" }, unsignedToken, { utf8: secretKey });
 }
 
-export function getSignedPreviewUrl(siteUrl, resourceType, resourceId, params = {}, options, secretKey) {
-    const token = getSignedToken(resourceType, resourceId, params, secretKey);
+export function getSignedPreviewUrl(siteUrl, resourceType, resourceId, params = {}, options, secretKey, previewEmbeddingParams) {
+    const token = getSignedToken(resourceType, resourceId, params, secretKey, previewEmbeddingParams);
     return `${siteUrl}/embed/${resourceType}/${token}${optionsToHashParams(options)}`;
 }
 
