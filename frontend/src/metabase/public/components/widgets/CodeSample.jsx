@@ -23,7 +23,7 @@ export default class CodeSample extends Component<*, Props, State> {
     state: State;
 
     static defaultProps = {
-        className: "bordered rounded relative"
+        className: "bordered rounded shadowed relative"
     }
 
     constructor(props: Props) {
