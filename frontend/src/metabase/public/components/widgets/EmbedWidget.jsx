@@ -27,7 +27,7 @@ export default class EmbedWidget extends Component<*, Props, *> {
                 ref={m => this._modal = m}
                 full
                 triggerElement={
-                    <Tooltip tooltip={`Embed this ${resourceType}`}>
+                    <Tooltip tooltip={`Share this ${resourceType}`}>
                         <Icon name="share" />
                     </Tooltip>
                 }

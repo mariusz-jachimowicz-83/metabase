@@ -2,14 +2,19 @@
 
 import React, { Component, PropTypes } from "react";
 
+import ToggleLarge from "metabase/components/ToggleLarge";
+import ActionButton from "metabase/components/ActionButton";
+
+import Parameters from "metabase/dashboard/containers/Parameters";
+
 import AdvancedSettingsPane from "./AdvancedSettingsPane";
 import PreviewPane from "./PreviewPane";
 import EmbedCodePane from "./EmbedCodePane";
-import ToggleLarge from "metabase/components/ToggleLarge";
-import Parameters from "metabase/dashboard/containers/Parameters";
 
 import type { Parameter, ParameterId } from "metabase/meta/types/Dashboard";
 import type { Pane, EmbedType, EmbeddableResource, EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
+
+import _ from "underscore";
 
 type Props = {
     pane: Pane,
@@ -59,6 +64,12 @@ const AdvancedEmbedPane = ({
     onSave
 }: Props) =>
     <div className="full flex flex-column">
+        { !resource.enable_embedding || !_.isEqual(resource.embedding_params, embeddingParams) &&
+            <div className="mb2 p2 bordered rounded flex align-center">
+                <div>You’ve made changes that need to be published before they will be reflected in your application embed.</div>
+                <ActionButton success medium className="ml-auto" actionFn={onSave} activeText="Updating..." successText="Updated" failedText="Failed!">Publish</ActionButton>
+            </div>
+        }
         <ToggleLarge
             className="mb2"
             style={{ width: 244, height: 34 }}
