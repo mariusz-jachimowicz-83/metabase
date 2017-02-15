@@ -11,7 +11,6 @@ import VisualizationResult from "./VisualizationResult.jsx";
 
 import Warnings from "./Warnings.jsx";
 import QueryDownloadWidget from "./QueryDownloadWidget.jsx";
-import QuestionShareWidget from "../containers/QuestionShareWidget";
 import QuestionEmbedWidget from "../containers/QuestionEmbedWidget";
 
 import { formatNumber, inflect } from "metabase/lib/formatting";
@@ -115,14 +114,10 @@ export default class QueryVisualization extends Component {
                             result={result}
                         />
                     : null }
-                    { isSaved && isPublicLinksEnabled && (isAdmin || card.public_uuid) ?
-                        <QuestionShareWidget
-                            className="mx1"
-                            card={card}
-                            isAdmin={isAdmin}
-                        />
-                    : null }
-                    { isSaved && isEmbeddingEnabled && isAdmin ?
+                    { isSaved && (
+                        (isPublicLinksEnabled && (isAdmin || card.public_uuid)) ||
+                        (isEmbeddingEnabled && isAdmin)
+                    ) ?
                         <QuestionEmbedWidget
                             className="mx1"
                             card={card}

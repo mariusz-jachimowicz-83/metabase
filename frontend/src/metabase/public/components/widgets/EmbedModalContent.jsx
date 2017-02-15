@@ -9,17 +9,17 @@ import AdvancedEmbedPane from "./AdvancedEmbedPane";
 
 import Icon from "metabase/components/Icon";
 
-import EmbedTypePicker from "./EmbedTypePicker";
-
+import SharingPane from "./SharingPane";
 
 import { getSignedPreviewUrl, getUnsignedPreviewUrl, getSignedToken } from "metabase/public/lib/embed";
 
-import { getSiteUrl, getEmbeddingSecretKey } from "metabase/selectors/settings";
+import { getSiteUrl, getEmbeddingSecretKey, getIsPublicSharingEnabled, getIsApplicationEmbeddingEnabled } from "metabase/selectors/settings";
+import { getUserIsAdmin } from "metabase/selectors/user";
 
 import type { Parameter, ParameterId } from "metabase/meta/types/Dashboard";
 
 export type Pane = "preview"|"code";
-export type EmbedType = null|"simple"|"secure";
+export type EmbedType = null|"simple"|"application";
 
 export type EmbeddingParams = {
     [key: string]: string
@@ -46,6 +46,7 @@ type Props = {
     onUpdateEnableEmbedding: (enable_embedding: bool) => Promise<void>,
     onUpdateEmbeddingParams: (embedding_params: EmbeddingParams) => Promise<void>,
     onCreatePublicLink: () => Promise<void>,
+    onDisablePublicLink: () => Promise<void>,
     onClose: () => void
 };
 
@@ -59,8 +60,11 @@ type State = {
 
 
 const mapStateToProps = (state, props) => ({
-    siteUrl: getSiteUrl(state, props),
-    secretKey: getEmbeddingSecretKey(state, props),
+    isAdmin:                        getUserIsAdmin(state, props),
+    siteUrl:                        getSiteUrl(state, props),
+    secretKey:                      getEmbeddingSecretKey(state, props),
+    isPublicSharingEnabled:         getIsPublicSharingEnabled(state, props),
+    isApplicationEmbeddingEnabled:  getIsApplicationEmbeddingEnabled(state, props),
 })
 
 @connect(mapStateToProps)
@@ -88,7 +92,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         try {
             const { resource } = this.props;
             const { embeddingParams, embedType } = this.state;
-            if (embedType === "secure") {
+            if (embedType === "application") {
                 if (!resource.enable_embedding) {
                     await this.props.onUpdateEnableEmbedding(true);
                 }
@@ -119,13 +123,16 @@ export default class EmbedModalContent extends Component<*, Props, State> {
     }
 
     render() {
-        const { siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
+        const { siteUrl, secretKey,
+            resource, resourceType, resourceParameters,
+            onClose
+        } = this.props;
         const { pane, embedType, embeddingParams, parameterValues, displayOptions } = this.state;
 
         const params = this.getPreviewParams();
 
         let iframeUrl;
-        if (embedType === "secure") {
+        if (embedType === "application") {
             iframeUrl = getSignedPreviewUrl(siteUrl, resourceType, resource.id, params, displayOptions, secretKey, embeddingParams);
         } else {
             iframeUrl = getUnsignedPreviewUrl(siteUrl, resourceType, resource.public_uuid, displayOptions);
@@ -136,7 +143,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
         return (
             <div className="p4 flex flex-column full-height">
-                <div className="flex align-center mb4">
+                <div className="flex align-center mb2">
                     <h2 className="ml-auto">
                         <EmbedTitle
                             onClick={() => this.setState({ embedType: null })}
@@ -153,9 +160,11 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                 <div className="flex flex-full my4">
                     <div className="flex-full ml-auto mr-auto" style={{ maxWidth: 1040 }}>
                         { embedType == null ?
-                            <EmbedTypePicker
+                            <SharingPane
+                                {...this.props}
+                                publicUrl={iframeUrl}
+                                iframeUrl={iframeUrl}
                                 onChangeEmbedType={(embedType) => this.setState({ embedType })}
-                                resourceType={resourceType}
                             />
                         : embedType === "simple" ?
                             <SimpleEmbedPane
@@ -163,7 +172,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
                                 displayOptions={displayOptions}
                                 onChangeDisplayOptions={(displayOptions) => this.setState({ displayOptions })}
                             />
-                        : embedType === "secure" ?
+                        : embedType === "application" ?
                             <AdvancedEmbedPane
                                 pane={pane}
                                 resource={resource}
@@ -195,7 +204,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
 
 const EmbedTitle = ({ type, onClick }) =>
     <a className="flex align-center" onClick={onClick}>
-        <span className="text-brand-hover">Embed</span>
+        <span className="text-brand-hover">Sharing</span>
         { type && <Icon name="chevronright" className="mx1 text-grey-3" /> }
         {type}
     </a>;

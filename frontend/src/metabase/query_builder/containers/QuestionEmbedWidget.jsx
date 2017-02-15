@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 
 import EmbedWidget from "metabase/public/components/widgets/EmbedWidget";
 
+import Urls from "metabase/lib/urls";
+
 import { getParameters } from "metabase/meta/Card";
 import { createPublicLink, deletePublicLink, updateEnableEmbedding, updateEmbeddingParams, } from "../actions";
 
@@ -30,6 +32,8 @@ export default class QuestionEmbedWidget extends Component {
                 onDisablePublicLink={() => deletePublicLink(card)}
                 onUpdateEnableEmbedding={(enableEmbedding) => updateEnableEmbedding(card, enableEmbedding)}
                 onUpdateEmbeddingParams={(embeddingParams) => updateEmbeddingParams(card, embeddingParams)}
+                getPublicUrl={({ public_uuid }, extension) => window.location.origin + Urls.publicCard(public_uuid, extension)}
+                extensions={["csv", "json"]}
             />
         );
     }

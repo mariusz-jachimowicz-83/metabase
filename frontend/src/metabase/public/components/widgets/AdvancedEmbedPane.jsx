@@ -69,7 +69,7 @@ const AdvancedEmbedPane = ({
         />
         <div className={"flex-full flex"}>
             <div className="flex-full flex flex-column">
-                { embedType === "secure" && previewParameters.length > 0 &&
+                { embedType === "application" && previewParameters.length > 0 &&
                     <div className="mb2 bordered rounded bg-white p2">
                         <h3 className="mb2">Preview Locked Parameters</h3>
                         <Parameters
@@ -87,9 +87,9 @@ const AdvancedEmbedPane = ({
                 : pane === "code" ?
                     <EmbedCodePane
                         className="flex-full"
+                        embedType={embedType}
                         resource={resource}
                         resourceType={resourceType}
-                        secure={embedType === "secure"}
                         iframeUrl={iframeUrl}
                         token={token}
                         siteUrl={siteUrl}
@@ -102,10 +102,10 @@ const AdvancedEmbedPane = ({
             <div className="ml4">
                 <AdvancedSettingsPane
                     pane={pane}
+                    embedType={embedType}
                     onChangePane={onChangePane}
                     resourceType={resourceType}
                     resourceParameters={resourceParameters}
-                    secure={embedType === "secure"}
                     embeddingParams={embeddingParams}
                     onChangeEmbeddingParameters={onChangeEmbeddingParameters}
                     displayOptions={displayOptions}

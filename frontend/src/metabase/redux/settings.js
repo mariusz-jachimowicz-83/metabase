@@ -9,7 +9,10 @@ import { SessionApi, SettingsApi } from "metabase/services";
 import { loadCurrentUser } from "./user";
 import { getUserIsAdmin } from "metabase/selectors/user";
 
-export const refreshSiteSettings = createThunkAction("REFRESH_SITE_SETTINGS", () =>
+const REFRESH_SITE_SETTINGS = "metabase/settings/REFRESH_SITE_SETTINGS";
+const REFRESH_SETTINGS_LIST = "metabase/settings/REFRESH_SETTINGS_LIST";
+
+export const refreshSiteSettings = createThunkAction(REFRESH_SITE_SETTINGS, () =>
     async (dispatch, getState) => {
         // public settings
         const settings = await SessionApi.properties();
@@ -25,7 +28,7 @@ export const refreshSiteSettings = createThunkAction("REFRESH_SITE_SETTINGS", ()
     }
 );
 
-export const refreshSettingsList = createAction("REFRESH_SETTINGS_LIST", async () => {
+export const refreshSettingsList = createAction(REFRESH_SETTINGS_LIST, async () => {
     let settingsList = await SettingsApi.list();
     MetabaseSettings.setAll(collectSettingsValues(settingsList));
     return settingsList.map((setting) => {
@@ -43,12 +46,12 @@ const collectSettingsValues = (settingsList) => {
 }
 
 const values = handleActions({
-    [refreshSiteSettings]: { next: (state, { payload }) => ({ ...state, ...payload }) },
-    [refreshSettingsList]: { next: (state, { payload }) => ({ ...state, ...collectSettingsValues(payload) }) },
+    [REFRESH_SITE_SETTINGS]: { next: (state, { payload }) => ({ ...state, ...payload }) },
+    [REFRESH_SETTINGS_LIST]: { next: (state, { payload }) => ({ ...state, ...collectSettingsValues(payload) }) },
 }, {});
 
 const settings = handleActions({
-    [refreshSettingsList]: { next: (state, { payload }) => payload }
+    [REFRESH_SETTINGS_LIST]: { next: (state, { payload }) => payload }
 }, []);
 
 export default combineReducers({

@@ -15,11 +15,11 @@ import "ace/mode-ruby";
 import "ace/mode-html";
 import "ace/mode-jsx";
 
-import type { EmbeddableResource, EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
+import type { EmbedType, EmbeddableResource, EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
 
 type Props = {
     className: string,
-    secure: bool,
+    embedType: EmbedType,
     iframeUrl: string,
     token: string,
     siteUrl: string,
@@ -30,10 +30,10 @@ type Props = {
     displayOptions: DisplayOptions
 }
 
-const EmbedCodePane = ({ className, secure, iframeUrl, token, siteUrl, secretKey, resource, resourceType, params, displayOptions }: Props) =>
+const EmbedCodePane = ({ className, embedType, iframeUrl, token, siteUrl, secretKey, resource, resourceType, params, displayOptions }: Props) =>
     <div className={className}>
-        { secure ?
-            <div key="secure">
+        { embedType === "application" ?
+            <div key="application">
                 <CodeSample
                     title="Server-side Token Signing"
                     options={getSignTokenOptions({ siteUrl, secretKey, resourceType, resourceId: resource.id, params, displayOptions })}

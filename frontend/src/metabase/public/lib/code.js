@@ -17,6 +17,8 @@ export const getSignTokenOptions = (params) => [
     { name: "Clojure", source: () => clojure(params), mode: "ace/mode/clojure" },
 ];
 
+export const getPublicEmbedHTML = (iframeUrl) => html({ iframeUrl: JSON.stringify(iframeUrl )});
+
 const html = ({ iframeUrl }) =>
 `<iframe
     src=${iframeUrl}

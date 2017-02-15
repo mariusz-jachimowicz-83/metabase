@@ -26,7 +26,7 @@ const EmbedTypePicker = ({ onChangeEmbedType, resourceType }: Props) =>
                     <p className="text-measure text-paragraph">Share your data with the world by embedding this {resourceType} in blog posts or web pages.</p>
                 </div>
             </div>
-            <div className="Grid-cell p4 cursor-pointer flex flex-column text-centered border-left text-green-hover"  onClick={() => onChangeEmbedType("secure")}>
+            <div className="Grid-cell p4 cursor-pointer flex flex-column text-centered border-left text-green-hover"  onClick={() => onChangeEmbedType("application")}>
                 <div className="m3 py3 flex align-center justify-center" style={{ height: 140 }}>
                     <RetinaImage
                         width={177}

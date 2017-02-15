@@ -16,7 +16,7 @@ const getIconForParameter = (parameter) =>
 
 const AdvancedSettingsPane = ({
     className,
-    secure,
+    embedType,
     resourceType, resourceParameters,
     embeddingParams, onChangeEmbeddingParameters,
     displayOptions, onChangeDisplayOptions,
@@ -31,7 +31,7 @@ const AdvancedSettingsPane = ({
                 onChangeDisplayOptions={onChangeDisplayOptions}
             />
         </Section>
-        { secure &&
+        { embedType === "application" &&
             <Section title="Parameters">
                 { resourceParameters.length > 0 ?
                     <p>Which parameters can users of this embed use?</p>
