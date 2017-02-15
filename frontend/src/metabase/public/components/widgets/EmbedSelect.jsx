@@ -8,9 +8,9 @@ import cx from "classnames";
 
 type Props = {
     className?: string,
-    value: string,
-    onChange: (value: string) => void,
-    options: Array<{ name: string, value: string}>
+    value: any,
+    onChange: (value: any) => void,
+    options: Array<{ name: string, value: any}>
 }
 
 const EmbedSelect = ({ className, value, onChange, options }: Props) =>

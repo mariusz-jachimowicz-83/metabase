@@ -15,7 +15,7 @@ import "ace/mode-ruby";
 import "ace/mode-html";
 import "ace/mode-jsx";
 
-import type { EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
+import type { EmbeddableResource, EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
 
 type Props = {
     className: string,
@@ -24,7 +24,7 @@ type Props = {
     token: string,
     siteUrl: string,
     secretKey: string,
-    resource: { id: string, public_uuid: string },
+    resource: EmbeddableResource,
     resourceType: string,
     params: EmbeddingParams,
     displayOptions: DisplayOptions

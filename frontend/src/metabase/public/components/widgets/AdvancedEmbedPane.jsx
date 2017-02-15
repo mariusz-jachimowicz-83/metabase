@@ -8,7 +8,33 @@ import EmbedCodePane from "./EmbedCodePane";
 import ToggleLarge from "metabase/components/ToggleLarge";
 import Parameters from "metabase/dashboard/containers/Parameters";
 
+import type { Parameter, ParameterId } from "metabase/meta/types/Dashboard";
+import type { Pane, EmbedType, EmbeddableResource, EmbeddingParams, DisplayOptions } from "./EmbedModalContent";
+
 type Props = {
+    pane: Pane,
+    embedType: EmbedType,
+
+    resourceType: string,
+    resource: EmbeddableResource,
+    resourceParameters:  Parameter[],
+
+    token: string,
+    iframeUrl: string,
+    siteUrl: string,
+    secretKey: string,
+    params: { [slug: string]: any },
+
+    displayOptions: DisplayOptions,
+    previewParameters: Parameter[],
+    parameterValues: { [id: ParameterId]: any },
+    embeddingParams: EmbeddingParams,
+
+    onChangeDisplayOptions: (DisplayOptions) => void,
+    onChangeEmbeddingParameters: (EmbeddingParams) => void,
+    onChangeParameterValue: (id: ParameterId, value: any) => void,
+    onChangePane: (pane: Pane) => void,
+    onSave: () => Promise<void>
 };
 
 const AdvancedEmbedPane = ({
@@ -49,7 +75,7 @@ const AdvancedEmbedPane = ({
                         <Parameters
                             parameters={previewParameters}
                             parameterValues={parameterValues}
-                            setParameterValue={(id, value) => onChangeParameterValue(id, value)}
+                            setParameterValue={onChangeParameterValue}
                         />
                     </div>
                 }

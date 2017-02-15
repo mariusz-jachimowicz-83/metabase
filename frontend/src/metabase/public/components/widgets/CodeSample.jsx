@@ -16,7 +16,7 @@ type Props = {
 };
 
 type State = {
-    name: string,
+    name: ?string,
 };
 
 export default class CodeSample extends Component<*, Props, State> {
@@ -29,7 +29,7 @@ export default class CodeSample extends Component<*, Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            name: props.options[0].name
+            name: Array.isArray(props.options) && props.options.length > 0 ? props.options[0].name : null
         };
     }
     render() {

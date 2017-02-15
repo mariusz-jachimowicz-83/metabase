@@ -3,11 +3,14 @@
 import React, { Component, PropTypes } from "react";
 import RetinaImage from 'react-retina-image';
 
-import Button from "metabase/components/Button";
-
 import cx from "classnames"
 
+import type { EmbedType } from "./EmbedModalContent"
+
 type Props = {
+     className?: string,
+     onChangeEmbedType: (embedType: EmbedType) => void,
+     resourceType: string
 };
 
 const EmbedTypePicker = ({ className, onChangeEmbedType, resourceType }: Props) =>

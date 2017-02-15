@@ -18,6 +18,9 @@ import { getSiteUrl, getEmbeddingSecretKey } from "metabase/selectors/settings";
 
 import type { Parameter, ParameterId } from "metabase/meta/types/Dashboard";
 
+export type Pane = "preview"|"code";
+export type EmbedType = null|"simple"|"secure";
+
 export type EmbeddingParams = {
     [key: string]: string
 }
@@ -27,11 +30,17 @@ export type DisplayOptions = {
     bordered: boolean
 }
 
+export type EmbeddableResource = {
+    id: string,
+    public_uuid: string,
+    embedding_params: EmbeddingParams
+}
+
 type Props = {
     className?: string,
     siteUrl: string,
     secretKey: string,
-    resource: { id: string, public_uuid: string, embedding_params: EmbeddingParams },
+    resource: EmbeddableResource,
     resourceType: string,
     resourceParameters: Parameter[],
     onUpdateEnableEmbedding: (enable_embedding: bool) => Promise<void>,
@@ -41,8 +50,8 @@ type Props = {
 };
 
 type State = {
-    pane: "preview"|"code",
-    embedType: null|"simple"|"secure",
+    pane: Pane,
+    embedType: EmbedType,
     embeddingParams: EmbeddingParams,
     displayOptions: DisplayOptions,
     parameterValues: { [id: ParameterId]: string }
@@ -110,7 +119,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
     }
 
     render() {
-        const { className, siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
+        const { siteUrl, secretKey, resource, resourceType, resourceParameters, onClose } = this.props;
         const { pane, embedType, embeddingParams, parameterValues, displayOptions } = this.state;
 
         const params = this.getPreviewParams();
@@ -118,7 +127,7 @@ export default class EmbedModalContent extends Component<*, Props, State> {
         let iframeUrl;
         if (embedType === "secure") {
             iframeUrl = getSignedPreviewUrl(siteUrl, resourceType, resource.id, params, displayOptions, secretKey, embeddingParams);
-        } else if (embedType === "simple") {
+        } else {
             iframeUrl = getUnsignedPreviewUrl(siteUrl, resourceType, resource.public_uuid, displayOptions);
         }
         const token = getSignedToken(resourceType, resource.id, params, secretKey, embeddingParams);
