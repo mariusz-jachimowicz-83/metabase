@@ -101,6 +101,8 @@ const AdvancedEmbedPane = ({
             </div>
             <div className="ml4">
                 <AdvancedSettingsPane
+                    pane={pane}
+                    onChangePane={onChangePane}
                     resourceType={resourceType}
                     resourceParameters={resourceParameters}
                     secure={embedType === "secure"}

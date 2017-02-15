@@ -1,6 +1,7 @@
 import React from "react";
 
 import Icon from "metabase/components/Icon";
+import Button from "metabase/components/Button";
 import ActionButton from "metabase/components/ActionButton";
 import Select, { Option } from "metabase/components/Select";
 
@@ -20,6 +21,7 @@ const AdvancedSettingsPane = ({
     embeddingParams, onChangeEmbeddingParameters,
     displayOptions, onChangeDisplayOptions,
     onSave,
+    pane, onChangePane,
 }) =>
     <div className={cx(className, "rounded bordered p2 flex flex-column bg-white")} style={{ width: 320 }}>
         <Section title="Style">
@@ -54,7 +56,11 @@ const AdvancedSettingsPane = ({
             </Section>
         }
         <div className="ml-auto">
-            <ActionButton primary actionFn={onSave} activeText="Updating..." successText="Updated" failedText="Failed!">Publish</ActionButton>
+            { pane === "preview" ?
+                <Button primary onClick={() => onChangePane("code")}>Next</Button>
+            :
+                <ActionButton primary actionFn={onSave} activeText="Updating..." successText="Updated" failedText="Failed!">Publish</ActionButton>
+            }
         </div>
     </div>
 
