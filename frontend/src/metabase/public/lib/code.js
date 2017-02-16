@@ -15,6 +15,7 @@ export const getSignedEmbedOptions = () => [
 export const getSignTokenOptions = (params) => [
     { name: "Node.js", source: () => node(params),    mode: "ace/mode/javascript", embedOption: "Pug / Jade" },
     { name: "Ruby",    source: () => ruby(params),    mode: "ace/mode/ruby",       embedOption: "ERB" },
+    { name: "Python",  source: () => python(params),  mode: "ace/mode/python" },
     { name: "Clojure", source: () => clojure(params), mode: "ace/mode/clojure" },
 ];
 
@@ -68,6 +69,23 @@ payload = {
   }
 }
 token = JWT.encode payload, METABASE_SECRET_KEY
+
+iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token${optionsToHashParams(displayOptions) ? " + " + JSON.stringify(optionsToHashParams(displayOptions)) : "" }
+`;
+
+const python = ({ siteUrl, secretKey, resourceType, resourceId, params, displayOptions }) =>
+`import jwt
+
+METABASE_SITE_URL = ${JSON.stringify(siteUrl)}
+METABASE_SECRET_KEY = ${JSON.stringify(secretKey)}
+
+payload = {
+  resource: {${resourceType}: ${resourceId}},
+  params: {
+    ${Object.entries(params).map(([key,value]) => JSON.stringify(key) + ": " + JSON.stringify(value)).join(",\n    ")}
+  }
+}
+token = jwt.encode(payload, METABASE_SECRET_KEY, algorithm="HS256")
 
 iframeUrl = METABASE_SITE_URL + "/embed/${resourceType}/" + token${optionsToHashParams(displayOptions) ? " + " + JSON.stringify(optionsToHashParams(displayOptions)) : "" }
 `;
